@@ -23,6 +23,15 @@ class ShoppingListViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var showAddItemModalButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Добавить", for: .normal)
+        button.backgroundColor = .slViolet
+        button.layer.cornerRadius = 10
+        return button
+    }()
+    
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +40,7 @@ class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, shoppingItemsTableView].forEach { view in
+        [gradientBackground, shoppingItemsTableView, showAddItemModalButton].forEach { view in
             self.view.addSubview(view)
         }
         
@@ -47,8 +56,14 @@ class ShoppingListViewController: UIViewController {
             
             shoppingItemsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
             shoppingItemsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            shoppingItemsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100),
-            shoppingItemsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+            shoppingItemsTableView.bottomAnchor.constraint(equalTo: showAddItemModalButton.topAnchor),
+            shoppingItemsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            showAddItemModalButton.topAnchor.constraint(equalTo: shoppingItemsTableView.bottomAnchor, constant: 20),
+            showAddItemModalButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            showAddItemModalButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            showAddItemModalButton.widthAnchor.constraint(equalToConstant: 200),
+            showAddItemModalButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
 }
