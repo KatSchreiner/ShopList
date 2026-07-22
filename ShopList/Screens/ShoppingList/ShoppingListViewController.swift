@@ -16,6 +16,16 @@ class ShoppingListViewController: UIViewController {
         return gradientBackgroundView
     }()
     
+    private lazy var currentDayHeader: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Сегодня"
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 18)
+        label.textColor = .white
+        return label
+    }()
+    
     private lazy var shoppingItemsTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,7 +50,7 @@ class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, shoppingItemsTableView, showAddItemModalButton].forEach { view in
+        [gradientBackground, currentDayHeader, shoppingItemsTableView, showAddItemModalButton].forEach { view in
             self.view.addSubview(view)
         }
         
@@ -54,7 +64,10 @@ class ShoppingListViewController: UIViewController {
             gradientBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             gradientBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            shoppingItemsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            currentDayHeader.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            currentDayHeader.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            shoppingItemsTableView.topAnchor.constraint(equalTo: currentDayHeader.bottomAnchor, constant: 20),
             shoppingItemsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             shoppingItemsTableView.bottomAnchor.constraint(equalTo: showAddItemModalButton.topAnchor),
             shoppingItemsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
