@@ -37,9 +37,11 @@ class ShoppingListViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Добавить", for: .normal)
+        button.titleLabel?.accessibilityIdentifier = "AddItemModalTitle"
         button.backgroundColor = .slViolet
         button.layer.cornerRadius = 10
         button.addTarget(self, action: #selector(showAddItemModalButtonTapped), for: .touchUpInside)
+        button.accessibilityIdentifier = "AddItemButton"
         return button
     }()
     
