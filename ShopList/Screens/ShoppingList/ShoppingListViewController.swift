@@ -11,7 +11,11 @@ class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Properties
     private lazy var gradientBackground: GradientBackgroundView = {
-        let gradientBackgroundView = GradientBackgroundView()
+        let gradientBackgroundView = GradientBackgroundView(
+            colors: [UIColor.slBlue.cgColor, UIColor.white.cgColor],
+            locations: [0.2, 0.5],
+            startPoint: CGPoint(x: 0.5, y: 0.0),
+            endPoint: CGPoint(x: 0.5, y: 1.0))
         gradientBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         return gradientBackgroundView
     }()
