@@ -39,6 +39,7 @@ class ShoppingListViewController: UIViewController {
         button.setTitle("Добавить", for: .normal)
         button.backgroundColor = .slViolet
         button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(showAddItemModalButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -46,6 +47,17 @@ class ShoppingListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+    }
+    
+    // MARK: - IB Actions
+    @IBAction private func showAddItemModalButtonTapped() {
+        let modalViewController = AddShoppingItemViewController()
+        modalViewController.modalPresentationStyle = .pageSheet
+        if let sheet = modalViewController.sheetPresentationController {
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+            sheet.detents = [.medium()]
+        }
+        present(modalViewController, animated: true, completion: nil)
     }
     
     // MARK: - Private Methods
