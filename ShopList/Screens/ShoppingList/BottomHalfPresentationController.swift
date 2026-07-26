@@ -28,11 +28,28 @@ class BottomHalfPresentationController: UIPresentationController {
         presentedView?.frame = frameOfPresentedViewInContainerView
         createMaskLayer()
         setupDimmingView()
+        updateDimmingFrame()
     }
     
-    // MARK: - IB Actions
     @objc private func dismissOnTap() {
-        presentingViewController.dismiss(animated: true)
+        guard let dimming = dimmingView else {
+            presentingViewController.dismiss(animated: true)
+            return
+        }
+        
+        dimming.isUserInteractionEnabled = false
+        
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            options: .curveEaseOut,
+            animations: {
+                dimming.alpha = 0
+            },
+            completion: { _ in
+                self.presentingViewController.dismiss(animated: false)
+            }
+        )
     }
     
     // MARK: Private Methods
@@ -42,13 +59,28 @@ class BottomHalfPresentationController: UIPresentationController {
         
         let view = UIView()
         view.backgroundColor = .black.withAlphaComponent(0.5)
+        view.alpha = 0
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.frame = container.bounds
         
         container.insertSubview(view, at: 0)
         dimmingView = view
         
+        animateDimmingAppearance(to: view)
         addTapGestureRecognizer(to: view)
+    }
+    
+    private func updateDimmingFrame() {
+        dimmingView?.frame = containerView?.bounds ?? .zero
+    }
+    
+    private func animateDimmingAppearance(to view: UIView) {
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            options: .curveEaseInOut) {
+                view.alpha = 0.5
+            }
     }
     
     private func addTapGestureRecognizer(to view: UIView) {
