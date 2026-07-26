@@ -30,6 +30,11 @@ class BottomHalfPresentationController: UIPresentationController {
         setupDimmingView()
     }
     
+    // MARK: - IB Actions
+    @objc private func dismissOnTap() {
+        presentingViewController.dismiss(animated: true)
+    }
+    
     // MARK: Private Methods
     private func setupDimmingView() {
         guard !didSetupDimming, let container = containerView else { return }
@@ -42,6 +47,14 @@ class BottomHalfPresentationController: UIPresentationController {
         
         container.insertSubview(view, at: 0)
         dimmingView = view
+        
+        addTapGestureRecognizer(to: view)
+    }
+    
+    private func addTapGestureRecognizer(to view: UIView) {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissOnTap))
+        view.addGestureRecognizer(tapGesture)
+        view.isUserInteractionEnabled = true
     }
     
     private func createMaskLayer() {
