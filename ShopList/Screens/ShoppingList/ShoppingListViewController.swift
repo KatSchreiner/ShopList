@@ -58,11 +58,8 @@ class ShoppingListViewController: UIViewController {
     // MARK: - IB Actions
     @IBAction private func showAddItemModalButtonTapped() {
         let modalViewController = AddShoppingItemViewController()
-        modalViewController.modalPresentationStyle = .pageSheet
-        if let sheet = modalViewController.sheetPresentationController {
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-            sheet.detents = [.medium()]
-        }
+        modalViewController.modalPresentationStyle = .custom
+        modalViewController.transitioningDelegate = self
         present(modalViewController, animated: true, completion: nil)
     }
     
@@ -96,5 +93,12 @@ class ShoppingListViewController: UIViewController {
             showAddItemModalButton.widthAnchor.constraint(equalToConstant: 200),
             showAddItemModalButton.heightAnchor.constraint(equalToConstant: 60)
         ])
+    }
+}
+
+// MARK: UIViewControllerTransitioningDelegate
+extension ShoppingListViewController: UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return BottomHalfPresentationController(presentedViewController: presented, presenting: presenting)
     }
 }
