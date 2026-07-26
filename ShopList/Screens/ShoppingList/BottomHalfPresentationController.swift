@@ -38,18 +38,9 @@ class BottomHalfPresentationController: UIPresentationController {
         }
         
         dimming.isUserInteractionEnabled = false
-        
-        UIView.animate(
-            withDuration: 0.3,
-            delay: 0,
-            options: .curveEaseOut,
-            animations: {
-                dimming.alpha = 0
-            },
-            completion: { _ in
-                self.presentingViewController.dismiss(animated: false)
-            }
-        )
+        dimming.fadeOut(duration: 0.3) { _ in
+            self.presentingViewController.dismiss(animated: false)
+        }
     }
     
     // MARK: Private Methods
@@ -66,21 +57,13 @@ class BottomHalfPresentationController: UIPresentationController {
         container.insertSubview(view, at: 0)
         dimmingView = view
         
-        animateDimmingAppearance(to: view)
+        view.fadeIn(duration: 0.3, alpha: 0.5, options: .curveEaseInOut)
+
         addTapGestureRecognizer(to: view)
     }
     
     private func updateDimmingFrame() {
         dimmingView?.frame = containerView?.bounds ?? .zero
-    }
-    
-    private func animateDimmingAppearance(to view: UIView) {
-        UIView.animate(
-            withDuration: 0.3,
-            delay: 0,
-            options: .curveEaseInOut) {
-                view.alpha = 0.5
-            }
     }
     
     private func addTapGestureRecognizer(to view: UIView) {
