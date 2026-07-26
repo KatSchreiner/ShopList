@@ -8,8 +8,12 @@
 import UIKit
 
 class BottomHalfPresentationController: UIPresentationController {
+    // MARK: - Private Properties
     private var maskLayer: CALayer?
+    private weak var dimmingView: UIView?
+    private var didSetupDimming = false
     
+    // MARK: - Override Methods
     override var frameOfPresentedViewInContainerView: CGRect {
         guard let container = containerView else { return .zero }
         let height = container.bounds.height * 0.5
@@ -23,6 +27,21 @@ class BottomHalfPresentationController: UIPresentationController {
     override func containerViewWillLayoutSubviews() {
         presentedView?.frame = frameOfPresentedViewInContainerView
         createMaskLayer()
+        setupDimmingView()
+    }
+    
+    // MARK: Private Methods
+    private func setupDimmingView() {
+        guard !didSetupDimming, let container = containerView else { return }
+        didSetupDimming = true
+        
+        let view = UIView()
+        view.backgroundColor = .black.withAlphaComponent(0.5)
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.frame = container.bounds
+        
+        container.insertSubview(view, at: 0)
+        dimmingView = view
     }
     
     private func createMaskLayer() {
@@ -45,7 +64,6 @@ class BottomHalfPresentationController: UIPresentationController {
         shapeLayer.path = path.cgPath
         shapeLayer.fillColor = UIColor.black.cgColor
         
-        mask.contents = shapeLayer.contents
         mask.sublayers = [shapeLayer]
     }
 }
