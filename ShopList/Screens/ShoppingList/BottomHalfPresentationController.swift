@@ -7,12 +7,13 @@
 
 import UIKit
 
-class BottomHalfPresentationController: UIPresentationController {
+class BottomHalfPresentationController: UIPresentationController, UIGestureRecognizerDelegate {
     // MARK: - Private Properties
     private var maskLayer: CALayer?
     private weak var dimmingView: UIView?
     private var didSetupDimming = false
     private var isAnimatingDismiss = false
+    private var swipeGesture: UISwipeGestureRecognizer?
     
     // MARK: - Override Methods
     override var frameOfPresentedViewInContainerView: CGRect {
@@ -61,6 +62,11 @@ class BottomHalfPresentationController: UIPresentationController {
         )
     }
     
+    @objc private func dismissOnSwipe() {
+        if isAnimatingDismiss { return }
+        dismissOnTap()
+    }
+    
     // MARK: Private Methods
     private func setupDimmingView() {
         guard !didSetupDimming, let container = containerView else { return }
@@ -78,6 +84,7 @@ class BottomHalfPresentationController: UIPresentationController {
         view.fadeIn(duration: 0.3, alpha: 0.5, options: .curveEaseInOut)
 
         addTapGestureRecognizer(to: view)
+        addSwipeGestureRecognizer(to: container)
     }
     
     private func updateDimmingFrame() {
@@ -88,6 +95,13 @@ class BottomHalfPresentationController: UIPresentationController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissOnTap))
         view.addGestureRecognizer(tapGesture)
         view.isUserInteractionEnabled = true
+    }
+    
+    private func addSwipeGestureRecognizer(to view: UIView) {
+        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(dismissOnSwipe))
+        swipeDown.direction = .down
+        swipeDown.delegate = self
+        view.addGestureRecognizer(swipeDown)
     }
     
     private func createMaskLayer() {
