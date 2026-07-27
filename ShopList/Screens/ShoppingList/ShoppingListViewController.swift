@@ -34,6 +34,7 @@ class ShoppingListViewController: UIViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = 10
+        tableView.backgroundColor = .white
         return tableView
     }()
     
@@ -47,6 +48,22 @@ class ShoppingListViewController: UIViewController {
         button.addTarget(self, action: #selector(showAddItemModalButtonTapped), for: .touchUpInside)
         button.accessibilityIdentifier = "AddItemButton"
         return button
+    }()
+    
+    private lazy var emptyStateImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "no_items_added"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
+    private lazy var emptyStateLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "Хм... Кажется здесь пока ничего нет"
+        label.numberOfLines = 0
+        label.textColor = Constants.primaryColor
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     // MARK: - View Life Cycles
@@ -65,7 +82,7 @@ class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, currentDayHeader, shoppingItemsTableView, showAddItemModalButton].forEach { view in
+        [gradientBackground, currentDayHeader, shoppingItemsTableView, showAddItemModalButton, emptyStateLabel, emptyStateImageView].forEach { view in
             self.view.addSubview(view)
         }
         
@@ -91,7 +108,13 @@ class ShoppingListViewController: UIViewController {
             showAddItemModalButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             showAddItemModalButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             showAddItemModalButton.widthAnchor.constraint(equalToConstant: 200),
-            showAddItemModalButton.heightAnchor.constraint(equalToConstant: 60)
+            showAddItemModalButton.heightAnchor.constraint(equalToConstant: 60),
+            
+            emptyStateImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyStateImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            emptyStateLabel.topAnchor.constraint(equalTo: emptyStateImageView.bottomAnchor, constant: 30),
+            emptyStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
 }
