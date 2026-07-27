@@ -7,15 +7,20 @@
 
 import UIKit
 
-class BottomHalfPresentationController: UIPresentationController, UIGestureRecognizerDelegate {
+class BottomHalfPresentationController: UIPresentationController {
     // MARK: - Private Properties
     private var maskLayer: CALayer?
     private weak var dimmingView: UIView?
     private var didSetupDimming = false
     private var isAnimatingDismiss = false
-    private var swipeGesture: UISwipeGestureRecognizer?
+    private var gestureManager = PresentationGestureManager()
     
     // MARK: - Override Methods
+    override init(presentedViewController: UIViewController, presenting: UIViewController?) {
+        super.init(presentedViewController: presentedViewController, presenting: presenting)
+        gestureManager.delegate = self
+    }
+    
     override var frameOfPresentedViewInContainerView: CGRect {
         guard let container = containerView else { return .zero }
         let height = container.bounds.height * 0.5
@@ -37,36 +42,6 @@ class BottomHalfPresentationController: UIPresentationController, UIGestureRecog
         updateDimmingFrame()
     }
     
-    @objc private func dismissOnTap() {
-        guard let dimming = dimmingView, let presented = presentedView  else {
-            presentingViewController.dismiss(animated: true)
-            return
-        }
-        
-        isAnimatingDismiss = true
-        dimming.isUserInteractionEnabled = false
-        
-        dimming.fadeOut(duration: 0.3) { _ in
-            self.presentingViewController.dismiss(animated: false)
-            self.isAnimatingDismiss = false
-        }
-        
-        UIView.animate(
-            withDuration: 0.3,
-            delay: 0,
-            options: .curveEaseOut,
-            animations: {
-                presented.transform = CGAffineTransform(translationX: 0, y: presented.bounds.height + 20)
-            },
-            completion: nil
-        )
-    }
-    
-    @objc private func dismissOnSwipe() {
-        if isAnimatingDismiss { return }
-        dismissOnTap()
-    }
-    
     // MARK: Private Methods
     private func setupDimmingView() {
         guard !didSetupDimming, let container = containerView else { return }
@@ -83,25 +58,12 @@ class BottomHalfPresentationController: UIPresentationController, UIGestureRecog
         
         view.fadeIn(duration: 0.3, alpha: 0.5, options: .curveEaseInOut)
 
-        addTapGestureRecognizer(to: view)
-        addSwipeGestureRecognizer(to: container)
+        gestureManager.setupTap(on: view)
+        gestureManager.setupSwipe(on: container)
     }
     
     private func updateDimmingFrame() {
         dimmingView?.frame = containerView?.bounds ?? .zero
-    }
-    
-    private func addTapGestureRecognizer(to view: UIView) {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissOnTap))
-        view.addGestureRecognizer(tapGesture)
-        view.isUserInteractionEnabled = true
-    }
-    
-    private func addSwipeGestureRecognizer(to view: UIView) {
-        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(dismissOnSwipe))
-        swipeDown.direction = .down
-        swipeDown.delegate = self
-        view.addGestureRecognizer(swipeDown)
     }
     
     private func createMaskLayer() {
@@ -125,5 +87,32 @@ class BottomHalfPresentationController: UIPresentationController, UIGestureRecog
         shapeLayer.fillColor = UIColor.black.cgColor
         
         mask.sublayers = [shapeLayer]
+    }
+}
+
+// MARK: - PresentationGestureDelegate
+extension BottomHalfPresentationController: PresentationGestureDelegate {
+    func didRequestDismiss() {
+        guard let dimming = dimmingView, let presented = presentedView else {
+            presentingViewController.dismiss(animated: true)
+            return
+        }
+        
+        isAnimatingDismiss = true
+        dimming.isUserInteractionEnabled = false
+        
+        dimming.fadeOut(duration: 0.3) { _ in
+            self.presentingViewController.dismiss(animated: false)
+            self.isAnimatingDismiss = false
+        }
+        
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            options: .curveEaseOut,
+            animations: {
+                presented.transform = CGAffineTransform(translationX: 0, y: presented.bounds.height + 20)
+            }
+        )
     }
 }
