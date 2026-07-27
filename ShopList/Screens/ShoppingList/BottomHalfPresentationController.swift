@@ -12,6 +12,7 @@ class BottomHalfPresentationController: UIPresentationController {
     private var maskLayer: CALayer?
     private weak var dimmingView: UIView?
     private var didSetupDimming = false
+    private var isAnimatingDismiss = false
     
     // MARK: - Override Methods
     override var frameOfPresentedViewInContainerView: CGRect {
@@ -25,22 +26,39 @@ class BottomHalfPresentationController: UIPresentationController {
     }
     
     override func containerViewWillLayoutSubviews() {
+        if isAnimatingDismiss { return }
+        
+        presentedView?.transform = .identity
         presentedView?.frame = frameOfPresentedViewInContainerView
+        
         createMaskLayer()
         setupDimmingView()
         updateDimmingFrame()
     }
     
     @objc private func dismissOnTap() {
-        guard let dimming = dimmingView else {
+        guard let dimming = dimmingView, let presented = presentedView  else {
             presentingViewController.dismiss(animated: true)
             return
         }
         
+        isAnimatingDismiss = true
         dimming.isUserInteractionEnabled = false
+        
         dimming.fadeOut(duration: 0.3) { _ in
             self.presentingViewController.dismiss(animated: false)
+            self.isAnimatingDismiss = false
         }
+        
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            options: .curveEaseOut,
+            animations: {
+                presented.transform = CGAffineTransform(translationX: 0, y: presented.bounds.height + 20)
+            },
+            completion: nil
+        )
     }
     
     // MARK: Private Methods
