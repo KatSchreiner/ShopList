@@ -25,6 +25,7 @@ final class AddShoppingItemViewController: UIViewController {
         textField.backgroundColor = Constants.background
         textField.textAlignment = Constants.centerAlignment
         textField.clipsToBounds = true
+        textField.accessibilityIdentifier = "ItemNameTextField"
         return textField
     }()
     
@@ -32,6 +33,7 @@ final class AddShoppingItemViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "voice_button"), for: .normal)
         button.addTarget(self, action: #selector(addItemVoiceButtonTapped), for: .touchUpInside)
+        button.accessibilityIdentifier = "AddItemVoiceButton"
         return button
     }()
     
@@ -39,6 +41,7 @@ final class AddShoppingItemViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "send_button"), for: .normal)
         button.addTarget(self, action: #selector(sendItemButtonTapped), for: .touchUpInside)
+        button.accessibilityIdentifier = "SendItemButton"
         return button
     }()
     
@@ -58,11 +61,9 @@ final class AddShoppingItemViewController: UIViewController {
     }
     
     @objc private func addItemVoiceButtonTapped() {
-
     }
     
     @objc private func sendItemButtonTapped() {
-        
     }
     
     // MARK: - Private Methods
