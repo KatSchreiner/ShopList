@@ -31,6 +31,7 @@ class ShoppingListViewController: UIViewController {
     
     private lazy var shoppingItemsTableView: UITableView = {
         let tableView = UITableView()
+        tableView.accessibilityIdentifier = "ShoppingItemsTableView"
         tableView.layer.cornerRadius = Constants.cornerRadius
         tableView.backgroundColor = Constants.background
         return tableView

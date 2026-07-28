@@ -18,6 +18,19 @@ final class ShopListUITests: XCTestCase {
     }
 
     @MainActor
+    func testScreenRendersCorrectly() throws {
+        let app = XCUIApplication()
+        app.launch()
+        
+        XCTAssertTrue(app.buttons["AddItemButton"].exists, "Кнопка добавить не найдена — возможно, не добавлена в view или constraints не активированы")
+        XCTAssertTrue(app.tables["ShoppingItemsTableView"].exists, "Таблица отсутствует на экране")
+        
+        let predicate = NSPredicate(format: "label CONTAINS 'Пока тут тихо'")
+        let emptyLabel = app.staticTexts.matching(predicate)
+        XCTAssertTrue(emptyLabel.element.exists, "Лейбл пустого состояния должен быть виден, когда список пуст")
+    }
+    
+    @MainActor
     func testTappingAddItemButton() throws {
         let app = XCUIApplication()
         app.launch()
