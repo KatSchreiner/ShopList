@@ -48,8 +48,8 @@ final class AddShoppingItemViewController: UIViewController {
     private lazy var buttonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [addItemVoiceButton, sendItemButton])
         stackView.axis = .horizontal
-        stackView.spacing = 100
-        stackView.distribution = .equalSpacing
+        stackView.spacing = 16
+        stackView.distribution = .fillEqually
         stackView.alignment = .center
         return stackView
     }()
@@ -95,7 +95,10 @@ final class AddShoppingItemViewController: UIViewController {
             addItemVoiceButton.heightAnchor.constraint(equalToConstant: 85),
             
             buttonStackView.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
-            buttonStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            buttonStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 85)
+
         ])
     }
 }
