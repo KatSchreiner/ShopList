@@ -12,8 +12,8 @@ final class AddShoppingItemViewController: UIViewController {
         let backgroundView = GradientBackgroundView(
             colors: [UIColor.slBlue.cgColor, UIColor.slViolet.cgColor],
             locations: [0.0, 1.0],
-            startPoint: CGPoint(x: 0.5, y: 0.0),
-            endPoint: CGPoint(x: 0.5, y: 1.0)
+            startPoint: Constants.directionOfGradient.start,
+            endPoint: Constants.directionOfGradient.end
         )
         return backgroundView
     }()
@@ -22,15 +22,14 @@ final class AddShoppingItemViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "Что купить?"
         textField.layer.cornerRadius = Constants.cornerRadius
-        textField.backgroundColor = .white
-        textField.textAlignment = .center
+        textField.backgroundColor = Constants.background
+        textField.textAlignment = Constants.centerAlignment
         textField.clipsToBounds = true
         return textField
     }()
     
     private lazy var addItemVoiceButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.tintColor = .slViolet
         button.setImage(UIImage(named: "voice_button"), for: .normal)
         button.addTarget(self, action: #selector(addItemVoiceButtonTapped), for: .touchUpInside)
         return button

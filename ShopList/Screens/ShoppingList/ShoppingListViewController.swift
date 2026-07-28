@@ -14,25 +14,25 @@ class ShoppingListViewController: UIViewController {
         let gradientBackgroundView = GradientBackgroundView(
             colors: [UIColor.slBlue.cgColor, UIColor.white.cgColor],
             locations: [0.2, 0.5],
-            startPoint: CGPoint(x: 0.5, y: 0.0),
-            endPoint: CGPoint(x: 0.5, y: 1.0))
+            startPoint: Constants.directionOfGradient.start,
+            endPoint: Constants.directionOfGradient.end)
         return gradientBackgroundView
     }()
     
     private lazy var currentDayHeader: UILabel = {
         let label = UILabel()
         label.text = "Сегодня"
-        label.textAlignment = .center
+        label.textAlignment = Constants.centerAlignment
         label.font = UIFont.preferredFont(forTextStyle: .headline)
         label.adjustsFontForContentSizeCategory = true
-        label.textColor = .white
+        label.textColor = Constants.background
         return label
     }()
     
     private lazy var shoppingItemsTableView: UITableView = {
         let tableView = UITableView()
         tableView.layer.cornerRadius = Constants.cornerRadius
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = Constants.background
         return tableView
     }()
     
@@ -40,7 +40,7 @@ class ShoppingListViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.setTitle("Добавить", for: .normal)
         button.titleLabel?.accessibilityIdentifier = "AddItemModalTitle"
-        button.backgroundColor = .slViolet
+        button.backgroundColor = Constants.accentColor
         button.layer.cornerRadius = Constants.cornerRadius
         button.addTarget(self, action: #selector(showAddItemModalButtonTapped), for: .touchUpInside)
         button.accessibilityIdentifier = "AddItemButton"
@@ -55,14 +55,13 @@ class ShoppingListViewController: UIViewController {
     
     private lazy var emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
         label.numberOfLines = 2
         label.textColor = Constants.primaryColor
         
         label.text = "Хм… Пока тут тихо.\nНажмите кнопку, чтобы начать."
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing =  10
-        paragraphStyle.alignment = .center
+        paragraphStyle.alignment = Constants.centerAlignment
         let attributedText = NSAttributedString(
             string: label.text ?? "",
             attributes: [.paragraphStyle: paragraphStyle])
