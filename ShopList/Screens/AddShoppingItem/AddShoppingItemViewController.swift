@@ -22,7 +22,7 @@ final class AddShoppingItemViewController: UIViewController {
     private lazy var itemNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Что купить?"
-        textField.layer.cornerRadius = 10
+        textField.layer.cornerRadius = Constants.cornerRadius
         textField.backgroundColor = .white
         textField.textAlignment = .center
         textField.clipsToBounds = true

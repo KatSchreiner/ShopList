@@ -34,7 +34,7 @@ class ShoppingListViewController: UIViewController {
     private lazy var shoppingItemsTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.layer.cornerRadius = 10
+        tableView.layer.cornerRadius = Constants.cornerRadius
         tableView.backgroundColor = .white
         return tableView
     }()
@@ -45,7 +45,7 @@ class ShoppingListViewController: UIViewController {
         button.setTitle("Добавить", for: .normal)
         button.titleLabel?.accessibilityIdentifier = "AddItemModalTitle"
         button.backgroundColor = .slViolet
-        button.layer.cornerRadius = 10
+        button.layer.cornerRadius = Constants.cornerRadius
         button.addTarget(self, action: #selector(showAddItemModalButtonTapped), for: .touchUpInside)
         button.accessibilityIdentifier = "AddItemButton"
         return button
