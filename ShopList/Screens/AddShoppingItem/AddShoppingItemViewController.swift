@@ -39,6 +39,14 @@ final class AddShoppingItemViewController: UIViewController {
         return button
     }()
     
+    private lazy var sendItemButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "send_button"), for: .normal)
+        button.addTarget(self, action: #selector(sendItemButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,9 +57,13 @@ final class AddShoppingItemViewController: UIViewController {
 
     }
     
+    @objc private func sendItemButtonTapped() {
+        
+    }
+    
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, itemNameTextField, addItemVoiceButton].forEach { view in
+        [gradientBackground, itemNameTextField, addItemVoiceButton, sendItemButton].forEach { view in
             self.view.addSubview(view)
         }
 
@@ -71,7 +83,10 @@ final class AddShoppingItemViewController: UIViewController {
             itemNameTextField.heightAnchor.constraint(equalToConstant: 70),
             
             addItemVoiceButton.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
-            addItemVoiceButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50)
+            addItemVoiceButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50),
+            
+            sendItemButton.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
+            sendItemButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -50)
         ])
     }
 }
