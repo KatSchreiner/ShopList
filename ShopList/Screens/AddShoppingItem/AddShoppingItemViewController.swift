@@ -22,8 +22,8 @@ final class AddShoppingItemViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "Что купить?"
         textField.layer.cornerRadius = Constants.cornerRadius
-        textField.backgroundColor = Constants.background
-        textField.textAlignment = Constants.centerAlignment
+        textField.backgroundColor = Constants.backgroundColor
+        textField.textAlignment = .center
         textField.clipsToBounds = true
         textField.accessibilityIdentifier = "ItemNameTextField"
         return textField
@@ -34,7 +34,17 @@ final class AddShoppingItemViewController: UIViewController {
         button.setImage(UIImage(named: "voice_button"), for: .normal)
         button.addTarget(self, action: #selector(addItemVoiceButtonTapped), for: .touchUpInside)
         button.accessibilityIdentifier = "AddItemVoiceButton"
+        button.accessibilityLabel = "Зачитать новую покупку голосом"
         return button
+    }()
+    
+    private lazy var voiceLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Зачитать"
+        label.textAlignment = .center
+        label.textColor = Constants.labelColor
+        label.font = UIFont.preferredFont(forTextStyle: .caption1)
+        return label
     }()
     
     private lazy var sendItemButton: UIButton = {
@@ -42,11 +52,39 @@ final class AddShoppingItemViewController: UIViewController {
         button.setImage(UIImage(named: "send_button"), for: .normal)
         button.addTarget(self, action: #selector(sendItemButtonTapped), for: .touchUpInside)
         button.accessibilityIdentifier = "SendItemButton"
+        button.accessibilityLabel = "Отправить покупку в список"
         return button
     }()
     
+    private lazy var sendLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Отправить"
+        label.textAlignment = .center
+        label.textColor = Constants.labelColor
+        label.font = UIFont.preferredFont(forTextStyle: .caption1)
+        return label
+    }()
+    
+    private lazy var voiceButtonStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [addItemVoiceButton, voiceLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        return stackView
+    }()
+    
+    private lazy var sendButtonStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [sendItemButton, sendLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        return stackView
+    }()
+    
     private lazy var buttonStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [addItemVoiceButton, sendItemButton])
+        let stackView = UIStackView(arrangedSubviews: [voiceButtonStackView, sendButtonStackView])
         stackView.axis = .horizontal
         stackView.spacing = 16
         stackView.distribution = .fillEqually
@@ -87,12 +125,6 @@ final class AddShoppingItemViewController: UIViewController {
             itemNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             itemNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
             itemNameTextField.heightAnchor.constraint(equalToConstant: 70),
-            
-            sendItemButton.widthAnchor.constraint(equalToConstant: 85),
-            sendItemButton.heightAnchor.constraint(equalToConstant: 85),
-            
-            addItemVoiceButton.widthAnchor.constraint(equalToConstant: 85),
-            addItemVoiceButton.heightAnchor.constraint(equalToConstant: 85),
             
             buttonStackView.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
             buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),

@@ -10,9 +10,9 @@ import UIKit
 class Constants {
     static let primaryColor: UIColor = .slDarkBlue
     static let accentColor: UIColor = .slViolet
-    static let background: UIColor = .white
+    static let backgroundColor: UIColor = .white
+    static let labelColor: UIColor = .white
     
-    static let centerAlignment: NSTextAlignment = .center
     static let cornerRadius: CGFloat = 15
     
     static let directionOfGradient: (start: CGPoint, end: CGPoint) = (

@@ -22,10 +22,10 @@ class ShoppingListViewController: UIViewController {
     private lazy var currentDayHeader: UILabel = {
         let label = UILabel()
         label.text = "Сегодня"
-        label.textAlignment = Constants.centerAlignment
+        label.textAlignment = .center
         label.font = UIFont.preferredFont(forTextStyle: .headline)
         label.adjustsFontForContentSizeCategory = true
-        label.textColor = Constants.background
+        label.textColor = Constants.labelColor
         return label
     }()
     
@@ -33,7 +33,7 @@ class ShoppingListViewController: UIViewController {
         let tableView = UITableView()
         tableView.accessibilityIdentifier = "ShoppingItemsTableView"
         tableView.layer.cornerRadius = Constants.cornerRadius
-        tableView.backgroundColor = Constants.background
+        tableView.backgroundColor = Constants.backgroundColor
         return tableView
     }()
     
@@ -62,7 +62,7 @@ class ShoppingListViewController: UIViewController {
         label.text = "Хм… Пока тут тихо.\nНажмите кнопку, чтобы начать."
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing =  10
-        paragraphStyle.alignment = Constants.centerAlignment
+        paragraphStyle.alignment = .center
         let attributedText = NSAttributedString(
             string: label.text ?? "",
             attributes: [.paragraphStyle: paragraphStyle])
