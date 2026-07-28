@@ -15,7 +15,6 @@ final class AddShoppingItemViewController: UIViewController {
             startPoint: CGPoint(x: 0.5, y: 0.0),
             endPoint: CGPoint(x: 0.5, y: 1.0)
         )
-        backgroundView.translatesAutoresizingMaskIntoConstraints = false
         return backgroundView
     }()
     
@@ -26,13 +25,11 @@ final class AddShoppingItemViewController: UIViewController {
         textField.backgroundColor = .white
         textField.textAlignment = .center
         textField.clipsToBounds = true
-        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
     private lazy var addItemVoiceButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .slViolet
         button.setImage(UIImage(named: "voice_button"), for: .normal)
         button.addTarget(self, action: #selector(addItemVoiceButtonTapped), for: .touchUpInside)
@@ -41,7 +38,6 @@ final class AddShoppingItemViewController: UIViewController {
     
     private lazy var sendItemButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "send_button"), for: .normal)
         button.addTarget(self, action: #selector(sendItemButtonTapped), for: .touchUpInside)
         return button
@@ -49,7 +45,6 @@ final class AddShoppingItemViewController: UIViewController {
     
     private lazy var buttonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [addItemVoiceButton, sendItemButton])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.spacing = 100
         stackView.distribution = .equalSpacing
@@ -75,6 +70,7 @@ final class AddShoppingItemViewController: UIViewController {
     private func setupView() {
         [gradientBackground, itemNameTextField, buttonStackView].forEach { view in
             self.view.addSubview(view)
+            view.translatesAutoresizingMaskIntoConstraints = false
         }
 
         addConstraints()

@@ -16,13 +16,11 @@ class ShoppingListViewController: UIViewController {
             locations: [0.2, 0.5],
             startPoint: CGPoint(x: 0.5, y: 0.0),
             endPoint: CGPoint(x: 0.5, y: 1.0))
-        gradientBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         return gradientBackgroundView
     }()
     
     private lazy var currentDayHeader: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Сегодня"
         label.textAlignment = .center
         label.font = UIFont.preferredFont(forTextStyle: .headline)
@@ -33,7 +31,6 @@ class ShoppingListViewController: UIViewController {
     
     private lazy var shoppingItemsTableView: UITableView = {
         let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = Constants.cornerRadius
         tableView.backgroundColor = .white
         return tableView
@@ -41,7 +38,6 @@ class ShoppingListViewController: UIViewController {
     
     private lazy var showAddItemModalButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Добавить", for: .normal)
         button.titleLabel?.accessibilityIdentifier = "AddItemModalTitle"
         button.backgroundColor = .slViolet
@@ -59,7 +55,6 @@ class ShoppingListViewController: UIViewController {
     
     private lazy var emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.numberOfLines = 2
         label.textColor = Constants.primaryColor
@@ -93,6 +88,7 @@ class ShoppingListViewController: UIViewController {
     private func setupView() {
         [gradientBackground, currentDayHeader, shoppingItemsTableView, showAddItemModalButton, emptyStateLabel, emptyStateImageView].forEach { view in
             self.view.addSubview(view)
+            view.translatesAutoresizingMaskIntoConstraints = false
         }
         
         setupConstraint()
