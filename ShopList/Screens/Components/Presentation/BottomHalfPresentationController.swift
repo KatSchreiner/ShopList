@@ -23,7 +23,7 @@ class BottomHalfPresentationController: UIPresentationController {
     
     override var frameOfPresentedViewInContainerView: CGRect {
         guard let container = containerView else { return .zero }
-        let height = container.bounds.height * 0.5
+        let height = container.bounds.height * 0.4
         return CGRect(
             x: 0,
             y: container.bounds.height - height,
@@ -48,7 +48,7 @@ class BottomHalfPresentationController: UIPresentationController {
         didSetupDimming = true
         
         let view = UIView()
-        view.backgroundColor = .black.withAlphaComponent(0.5)
+        view.backgroundColor = .black
         view.alpha = 0
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.frame = container.bounds

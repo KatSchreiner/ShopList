@@ -25,7 +25,8 @@ class ShoppingListViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Сегодня"
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 18)
+        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = .white
         return label
     }()
@@ -58,11 +59,19 @@ class ShoppingListViewController: UIViewController {
     
     private lazy var emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
-        label.text = "Хм... Кажется здесь пока ничего нет"
-        label.numberOfLines = 0
-        label.textColor = Constants.primaryColor
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        label.textColor = Constants.primaryColor
+        
+        label.text = "Хм… Пока тут тихо.\nНажмите кнопку, чтобы начать."
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing =  10
+        paragraphStyle.alignment = .center
+        let attributedText = NSAttributedString(
+            string: label.text ?? "",
+            attributes: [.paragraphStyle: paragraphStyle])
+        label.attributedText = attributedText
         return label
     }()
     
@@ -104,7 +113,6 @@ class ShoppingListViewController: UIViewController {
             shoppingItemsTableView.bottomAnchor.constraint(equalTo: showAddItemModalButton.topAnchor),
             shoppingItemsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
-            showAddItemModalButton.topAnchor.constraint(equalTo: shoppingItemsTableView.bottomAnchor, constant: 20),
             showAddItemModalButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             showAddItemModalButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
             showAddItemModalButton.widthAnchor.constraint(equalToConstant: 200),
@@ -114,7 +122,7 @@ class ShoppingListViewController: UIViewController {
             emptyStateImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
             emptyStateLabel.topAnchor.constraint(equalTo: emptyStateImageView.bottomAnchor, constant: 30),
-            emptyStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
 }
