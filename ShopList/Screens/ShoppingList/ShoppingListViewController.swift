@@ -61,7 +61,7 @@ class ShoppingListViewController: UIViewController {
         
         label.text = "Хм… Пока тут тихо.\nНажмите кнопку, чтобы начать."
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing =  10
+        paragraphStyle.lineSpacing =  Constants.smallSpacing
         paragraphStyle.alignment = .center
         let attributedText = NSAttributedString(
             string: label.text ?? "",

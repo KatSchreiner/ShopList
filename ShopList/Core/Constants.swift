@@ -15,6 +15,10 @@ class Constants {
     
     static let cornerRadius: CGFloat = 15
     
+    static let smallSpacing: CGFloat = 8
+    static let defaultSpacing: CGFloat = 16
+    static let largeSpacing: CGFloat = 24
+    
     static let directionOfGradient: (start: CGPoint, end: CGPoint) = (
         start: CGPoint(x: 0.5, y: 0.0),
         end: CGPoint(x: 0.5, y: 1.0))

@@ -68,7 +68,7 @@ final class AddShoppingItemViewController: UIViewController {
     private lazy var voiceButtonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [addItemVoiceButton, voiceLabel])
         stackView.axis = .vertical
-        stackView.spacing = 8
+        stackView.spacing = Constants.smallSpacing
         stackView.alignment = .center
         stackView.distribution = .fill
         return stackView
@@ -77,7 +77,7 @@ final class AddShoppingItemViewController: UIViewController {
     private lazy var sendButtonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [sendItemButton, sendLabel])
         stackView.axis = .vertical
-        stackView.spacing = 8
+        stackView.spacing = Constants.smallSpacing
         stackView.alignment = .center
         stackView.distribution = .fill
         return stackView
@@ -86,7 +86,7 @@ final class AddShoppingItemViewController: UIViewController {
     private lazy var buttonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [voiceButtonStackView, sendButtonStackView])
         stackView.axis = .horizontal
-        stackView.spacing = 16
+        stackView.spacing = Constants.defaultSpacing
         stackView.distribution = .fillEqually
         stackView.alignment = .center
         return stackView
