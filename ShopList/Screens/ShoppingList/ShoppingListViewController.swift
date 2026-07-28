@@ -12,7 +12,7 @@ class ShoppingListViewController: UIViewController {
     // MARK: - Private Properties
     private lazy var gradientBackground: GradientBackgroundView = {
         let gradientBackgroundView = GradientBackgroundView(
-            colors: [UIColor.slBlue.cgColor, UIColor.white.cgColor],
+            colors: [UIColor.slBlue.cgColor, UIColor.slWhite.cgColor],
             locations: [0.2, 0.5],
             startPoint: Constants.directionOfGradient.start,
             endPoint: Constants.directionOfGradient.end)
@@ -23,7 +23,7 @@ class ShoppingListViewController: UIViewController {
         let label = UILabel()
         label.text = "Сегодня"
         label.textAlignment = .center
-        label.font = UIFont.preferredFont(forTextStyle: .headline)
+        label.font = Constants.titleFont
         label.adjustsFontForContentSizeCategory = true
         label.textColor = Constants.labelColor
         return label
@@ -40,6 +40,7 @@ class ShoppingListViewController: UIViewController {
     private lazy var showAddItemModalButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("Добавить", for: .normal)
+        button.titleLabel?.font = Constants.bodyFont
         button.titleLabel?.accessibilityIdentifier = "AddItemModalTitle"
         button.backgroundColor = Constants.accentColor
         button.layer.cornerRadius = Constants.cornerRadius
@@ -58,6 +59,7 @@ class ShoppingListViewController: UIViewController {
         let label = UILabel()
         label.numberOfLines = 2
         label.textColor = Constants.primaryColor
+        label.font = Constants.bodyFont
         
         label.text = "Хм… Пока тут тихо.\nНажмите кнопку, чтобы начать."
         let paragraphStyle = NSMutableParagraphStyle()

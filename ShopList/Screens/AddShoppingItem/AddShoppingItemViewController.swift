@@ -21,6 +21,7 @@ final class AddShoppingItemViewController: UIViewController {
     private lazy var itemNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Что купить?"
+        textField.font = Constants.bodyFont
         textField.layer.cornerRadius = Constants.cornerRadius
         textField.backgroundColor = Constants.backgroundColor
         textField.textAlignment = .center
@@ -42,8 +43,8 @@ final class AddShoppingItemViewController: UIViewController {
         let label = UILabel()
         label.text = "Зачитать"
         label.textAlignment = .center
-        label.textColor = Constants.labelColor
-        label.font = UIFont.preferredFont(forTextStyle: .caption1)
+        label.textColor = .white
+        label.font = Constants.captionFont
         return label
     }()
     
@@ -60,8 +61,8 @@ final class AddShoppingItemViewController: UIViewController {
         let label = UILabel()
         label.text = "Отправить"
         label.textAlignment = .center
-        label.textColor = Constants.labelColor
-        label.font = UIFont.preferredFont(forTextStyle: .caption1)
+        label.textColor = .white
+        label.font = Constants.captionFont
         return label
     }()
     
