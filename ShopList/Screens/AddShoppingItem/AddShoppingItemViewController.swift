@@ -47,6 +47,16 @@ final class AddShoppingItemViewController: UIViewController {
         return button
     }()
     
+    private lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [addItemVoiceButton, sendItemButton])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.spacing = 100
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .center
+        return stackView
+    }()
+    
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,7 +73,7 @@ final class AddShoppingItemViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, itemNameTextField, addItemVoiceButton, sendItemButton].forEach { view in
+        [gradientBackground, itemNameTextField, buttonStackView].forEach { view in
             self.view.addSubview(view)
         }
 
@@ -77,16 +87,19 @@ final class AddShoppingItemViewController: UIViewController {
             gradientBackground.topAnchor.constraint(equalTo: view.topAnchor),
             gradientBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            itemNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-            itemNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
-            itemNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            itemNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            itemNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            itemNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
             itemNameTextField.heightAnchor.constraint(equalToConstant: 70),
             
-            addItemVoiceButton.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
-            addItemVoiceButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50),
+            sendItemButton.widthAnchor.constraint(equalToConstant: 85),
+            sendItemButton.heightAnchor.constraint(equalToConstant: 85),
             
-            sendItemButton.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
-            sendItemButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -50)
+            addItemVoiceButton.widthAnchor.constraint(equalToConstant: 85),
+            addItemVoiceButton.heightAnchor.constraint(equalToConstant: 85),
+            
+            buttonStackView.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
+            buttonStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
 }
