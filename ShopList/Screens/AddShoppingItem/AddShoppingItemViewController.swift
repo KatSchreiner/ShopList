@@ -30,16 +30,31 @@ final class AddShoppingItemViewController: UIViewController {
         return textField
     }()
     
+    private lazy var addItemVoiceButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .slViolet
+        button.setImage(UIImage(named: "voice_button"), for: .normal)
+        button.addTarget(self, action: #selector(addItemVoiceButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
     
+    @objc private func addItemVoiceButtonTapped() {
+
+    }
+    
     // MARK: - Private Methods
     private func setupView() {
-        view.addSubview(gradientBackground)
-        view.addSubview(itemNameTextField)
+        [gradientBackground, itemNameTextField, addItemVoiceButton].forEach { view in
+            self.view.addSubview(view)
+        }
+
         addConstraints()
     }
     
@@ -53,7 +68,10 @@ final class AddShoppingItemViewController: UIViewController {
             itemNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             itemNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
             itemNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-            itemNameTextField.heightAnchor.constraint(equalToConstant: 70)
+            itemNameTextField.heightAnchor.constraint(equalToConstant: 70),
+            
+            addItemVoiceButton.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
+            addItemVoiceButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 50)
         ])
     }
 }
