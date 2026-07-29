@@ -37,6 +37,7 @@ final class AddShoppingItemViewController: UIViewController {
         button.accessibilityIdentifier = "AddItemVoiceButton"
         button.accessibilityLabel = "Зачитать новую покупку голосом"
         button.contentMode = .scaleAspectFit
+        button.adjustsImageWhenHighlighted = false
         return button
     }()
     
@@ -56,6 +57,7 @@ final class AddShoppingItemViewController: UIViewController {
         button.accessibilityIdentifier = "SendItemButton"
         button.accessibilityLabel = "Отправить покупку в список"
         button.contentMode = .scaleAspectFit
+        button.adjustsImageWhenHighlighted = false
         return button
     }()
     
@@ -103,13 +105,12 @@ final class AddShoppingItemViewController: UIViewController {
     
     @objc private func addItemVoiceButtonTapped() {
         // TODO: Реализовать голосовой ввод
-        print("Voice input tapped")
+        addItemVoiceButton.scaleDownAnimation()
     }
     
     @objc private func sendItemButtonTapped() {
         // TODO: Передать текст в родительский контроллер / ViewModel
-        guard let itemName = itemNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines), !itemName.isEmpty else { return }
-        print("Item name: \(itemName)")
+        sendItemButton.scaleDownAnimation()
     }
     
     // MARK: - Private Methods
