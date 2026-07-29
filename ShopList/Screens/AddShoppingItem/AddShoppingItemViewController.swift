@@ -104,12 +104,12 @@ final class AddShoppingItemViewController: UIViewController {
     }
     
     @objc private func addItemVoiceButtonTapped() {
-        // TODO: Реализовать голосовой ввод
+        UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
         addItemVoiceButton.scaleDownAnimation()
     }
     
     @objc private func sendItemButtonTapped() {
-        // TODO: Передать текст в родительский контроллер / ViewModel
+        UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
         sendItemButton.scaleDownAnimation()
     }
     
@@ -131,8 +131,8 @@ final class AddShoppingItemViewController: UIViewController {
             gradientBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             itemNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
-            itemNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
-            itemNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+            itemNameTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 40),
+            itemNameTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -40),
             itemNameTextField.heightAnchor.constraint(equalToConstant: 70),
             
             buttonStackView.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),

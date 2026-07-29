@@ -80,6 +80,8 @@ class ShoppingListViewController: UIViewController {
     
     // MARK: - IB Actions
     @IBAction private func showAddItemModalButtonTapped() {
+        UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
+        
         let modalViewController = AddShoppingItemViewController()
         modalViewController.modalPresentationStyle = .custom
         modalViewController.transitioningDelegate = self

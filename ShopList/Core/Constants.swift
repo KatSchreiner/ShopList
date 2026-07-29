@@ -26,4 +26,6 @@ class Constants {
     static let directionOfGradient: (start: CGPoint, end: CGPoint) = (
         start: CGPoint(x: 0.5, y: 0.0),
         end: CGPoint(x: 0.5, y: 1.0))
+    
+    static let feedbackStyle: UIImpactFeedbackGenerator.FeedbackStyle = .light
 }
