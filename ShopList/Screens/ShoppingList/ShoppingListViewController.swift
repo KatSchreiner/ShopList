@@ -25,7 +25,7 @@ class ShoppingListViewController: UIViewController {
         label.textAlignment = .center
         label.font = Constants.titleFont
         label.adjustsFontForContentSizeCategory = true
-        label.textColor = Constants.labelColor
+        label.textColor = .white
         return label
     }()
     
