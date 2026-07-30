@@ -10,6 +10,8 @@ import UIKit
 class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Properties
+    private let viewModel = ShoppingListViewModel()
+    
     private lazy var gradientBackground: GradientBackgroundView = {
         let gradientBackgroundView = GradientBackgroundView(
             colors: [UIColor.slBlue.cgColor, UIColor.slWhite.cgColor],
@@ -34,6 +36,9 @@ class ShoppingListViewController: UIViewController {
         tableView.accessibilityIdentifier = "ShoppingItemsTableView"
         tableView.layer.cornerRadius = Constants.cornerRadius
         tableView.backgroundColor = Constants.backgroundColor
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(ShoppingItemTableViewCell.self, forCellReuseIdentifier: ShoppingItemTableViewCell.reuseIdentifier)
         return tableView
     }()
     
@@ -59,7 +64,7 @@ class ShoppingListViewController: UIViewController {
         let label = UILabel()
         label.numberOfLines = 2
         label.textColor = Constants.primaryColor
-        label.font = Constants.bodyFont
+        label.font = Constants.bodyFont 
         
         label.text = "Хм… Пока тут тихо.\nНажмите кнопку, чтобы начать."
         let paragraphStyle = NSMutableParagraphStyle()
@@ -76,6 +81,7 @@ class ShoppingListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        updateEmptyState()
     }
     
     // MARK: - IB Actions
@@ -94,7 +100,7 @@ class ShoppingListViewController: UIViewController {
             self.view.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
-        
+
         setupConstraint()
     }
 
@@ -125,11 +131,42 @@ class ShoppingListViewController: UIViewController {
             emptyStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
+    
+    private func updateEmptyState() {
+        let isEmpty = viewModel.isEmpty
+        emptyStateImageView.isHidden = !isEmpty
+        emptyStateLabel.isHidden = !isEmpty
+    }
 }
 
 // MARK: UIViewControllerTransitioningDelegate
 extension ShoppingListViewController: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return BottomHalfPresentationController(presentedViewController: presented, presenting: presenting)
+    }
+}
+
+// MARK: UITableViewDataSource
+extension ShoppingListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.shoppingItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ShoppingItemTableViewCell.reuseIdentifier, for: indexPath) as? ShoppingItemTableViewCell else { return UITableViewCell() }
+        
+        let shoppingItem = viewModel.shoppingItems[indexPath.row]
+        print("Configuring cell for item: \(shoppingItem.title)")
+
+        cell.configure(with: shoppingItem)
+        
+        return cell
+    }
+}
+
+// MARK: UITableViewDelegate
+extension ShoppingListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
 }
