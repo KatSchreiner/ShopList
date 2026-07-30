@@ -16,6 +16,7 @@ class ShoppingItemTableViewCell: UITableViewCell {
         view.layer.cornerRadius = Constants.cornerRadius
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.gray.cgColor
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -24,6 +25,7 @@ class ShoppingItemTableViewCell: UITableViewCell {
         label.font = Constants.bodyFont
         label.textColor = Constants.primaryColor
         label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -43,8 +45,8 @@ class ShoppingItemTableViewCell: UITableViewCell {
     }
     
     private func setupView() {
-        contentView.addSubview(titleLabel)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(titleLabel)
+        contentView.addSubview(containerView)
         
         addConstraint()
     }
@@ -52,9 +54,14 @@ class ShoppingItemTableViewCell: UITableViewCell {
     private func addConstraint() {
         
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+            titleLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
         ])
     }
 }

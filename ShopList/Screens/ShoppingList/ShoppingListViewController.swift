@@ -36,6 +36,8 @@ class ShoppingListViewController: UIViewController {
         tableView.accessibilityIdentifier = "ShoppingItemsTableView"
         tableView.layer.cornerRadius = Constants.cornerRadius
         tableView.backgroundColor = Constants.backgroundColor
+        tableView.separatorStyle = .none
+        tableView.contentInset.top = 10
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(ShoppingItemTableViewCell.self, forCellReuseIdentifier: ShoppingItemTableViewCell.reuseIdentifier)
@@ -100,7 +102,12 @@ class ShoppingListViewController: UIViewController {
             self.view.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
-
+        viewModel.shoppingItems = [
+        ShoppingItem(id: UUID(), title: "Молоко", isChecked: false),
+        ShoppingItem(id: UUID(), title: "Хлеб", isChecked: true),
+        ShoppingItem(id: UUID(), title: "Яйца", isChecked: false)
+        ]
+        shoppingItemsTableView.reloadData()
         setupConstraint()
     }
 
@@ -159,6 +166,7 @@ extension ShoppingListViewController: UITableViewDataSource {
         print("Configuring cell for item: \(shoppingItem.title)")
 
         cell.configure(with: shoppingItem)
+        cell.selectionStyle = .none
         
         return cell
     }
