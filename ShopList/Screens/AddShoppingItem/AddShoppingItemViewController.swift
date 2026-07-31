@@ -5,9 +5,12 @@
 //  Created by Екатерина Шрайнер on 20.07.2026.
 //
 import UIKit
+import Speech
 
 final class AddShoppingItemViewController: UIViewController {
     // MARK: - Private Properties
+    private let voiceInputManager = VoiceInputManager()
+    
     private lazy var gradientBackground: GradientBackgroundView = {
         let backgroundView = GradientBackgroundView(
             colors: [UIColor.slBlue.cgColor, UIColor.slViolet.cgColor],
@@ -103,9 +106,33 @@ final class AddShoppingItemViewController: UIViewController {
         setupView()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        voiceInputManager.stopRecording()
+    }
+    
+    deinit {
+        voiceInputManager.stopRecording()
+        voiceInputManager.audioEngine.stop()
+    }
+    
     @objc private func addItemVoiceButtonTapped() {
         UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
         addItemVoiceButton.scaleDownAnimation()
+        
+        addItemVoiceButton.isEnabled = false
+        
+        voiceInputManager.requestMicrophonePermission { [weak self] granted in
+            guard let self = self else { return }
+            if granted {
+                self.voiceInputManager.startRecording { [weak self] success in
+                    guard let self = self else { return }
+                    self.addItemVoiceButton.isEnabled = true
+                }
+            } else {
+                self.addItemVoiceButton.isEnabled = true
+            }
+        }
     }
     
     @objc private func sendItemButtonTapped() {
@@ -119,8 +146,9 @@ final class AddShoppingItemViewController: UIViewController {
             self.view.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
-
+        
         addConstraints()
+        setupVoiceInputHandlers()
     }
     
     private func addConstraints() {
@@ -139,7 +167,19 @@ final class AddShoppingItemViewController: UIViewController {
             buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
             buttonStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 85)
-
         ])
+    }
+    
+    private func setupVoiceInputHandlers() {
+        voiceInputManager.onResult = { [weak self] text in
+            guard let self = self else { return }
+            self.itemNameTextField.text = text
+        }
+        
+        voiceInputManager.onError = { [weak self] error in
+            guard let self = self else { return }
+            print("❌ Ошибка распознавания: \(error.localizedDescription)")
+            self.addItemVoiceButton.isEnabled = true
+        }
     }
 }
