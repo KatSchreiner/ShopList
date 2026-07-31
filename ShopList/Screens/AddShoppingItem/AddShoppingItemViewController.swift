@@ -116,7 +116,7 @@ final class AddShoppingItemViewController: UIViewController {
     
     @objc private func addItemVoiceButtonTapped() {
         UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
-        //addItemVoiceButton.scaleDownAnimation()
+//        addItemVoiceButton.scaleDownAnimation()
         viewModel.toggleVoiceRecording()
     }
     
@@ -179,9 +179,6 @@ final class AddShoppingItemViewController: UIViewController {
     
     private func updateVoiceButtonAppearance(isRecording: Bool) {
         if isRecording {
-            addItemVoiceButton.layer.removeAllAnimations()
-            addItemVoiceButton.transform = .identity
-            
             UIView.animate(
                 withDuration: 0.6,
                 delay: 0,
@@ -195,8 +192,17 @@ final class AddShoppingItemViewController: UIViewController {
             voiceLabel.text = "Остановить"
             voiceLabel.textColor = UIColor.slYellow
         } else {
-            addItemVoiceButton.layer.removeAllAnimations()
-            addItemVoiceButton.transform = .identity
+            UIView.animate(
+                withDuration: 0.4,
+                delay: 0,
+                usingSpringWithDamping: 0.7,
+                initialSpringVelocity: 0.5,
+                options: [.allowUserInteraction, .beginFromCurrentState],
+                animations: {
+                    self.addItemVoiceButton.transform = .identity
+                },
+                completion: nil
+            )
             
             voiceLabel.text = "Зачитать"
             voiceLabel.textColor = .white
