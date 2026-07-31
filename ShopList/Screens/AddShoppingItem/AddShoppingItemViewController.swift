@@ -6,12 +6,12 @@
 //
 import UIKit
 import Speech
+import Combine
 
 final class AddShoppingItemViewController: UIViewController {
     // MARK: - Private Properties
-    private let voiceInputManager = VoiceInputManager()
-    private var isRecording = false
-    private var isUserStoppedRecording = false
+    private let viewModel = AddShoppingItemViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
     private lazy var gradientBackground: GradientBackgroundView = {
         let backgroundView = GradientBackgroundView(
@@ -106,33 +106,24 @@ final class AddShoppingItemViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        setupBindings()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        voiceInputManager.stopRecording()
-    }
-    
-    deinit {
-        voiceInputManager.stopRecording()
-        voiceInputManager.audioEngine.stop()
+        viewModel.cleanup()
     }
     
     @objc private func addItemVoiceButtonTapped() {
         UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
         //addItemVoiceButton.scaleDownAnimation()
-        
-        if isRecording {
-            stopVoiceRecording()
-            return
-        }
-        
-        startVoiceRecording()
+        viewModel.toggleVoiceRecording()
     }
     
     @objc private func sendItemButtonTapped() {
         UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
-        sendItemButton.scaleDownAnimation()
+        //sendItemButton.scaleDownAnimation()
+        viewModel.sendItem()
     }
     
     // MARK: - Private Methods
@@ -143,7 +134,6 @@ final class AddShoppingItemViewController: UIViewController {
         }
         
         addConstraints()
-        setupVoiceInputHandlers()
     }
     
     private func addConstraints() {
@@ -165,89 +155,51 @@ final class AddShoppingItemViewController: UIViewController {
         ])
     }
     
-    private func setupVoiceInputHandlers() {
-        voiceInputManager.onResult = { [weak self] text in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                if self.isRecording {
-                    self.itemNameTextField.text = text
-                }
-            }
-        }
+    private func setupBindings() {
+        NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: itemNameTextField)
+            .compactMap { ($0.object as? UITextField)?.text }
+            .assign(to: \.itemText, on: viewModel)
+            .store(in: &cancellables)
         
-        voiceInputManager.onError = { [weak self] error in
-            guard let self = self else { return }
-            print("❌ Ошибка распознавания: \\(error.localizedDescription)")
-            DispatchQueue.main.async {
-                self.stopVoiceRecording(userStopped: false)
+        viewModel.$itemText
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] text in
+                guard let self = self, self.itemNameTextField.text != text else { return }
+                self.itemNameTextField.text = text
             }
-        }
-    }
-    
-    private func startVoiceRecording() {
-        isRecording = true
-        updateVoiceButtonAppearance(isRecording: true)
-
-        voiceInputManager.requestMicrophonePermission { [weak self] granted in
-            guard let self = self else { return }
-
-            if granted {
-                self.voiceInputManager.startRecording { [weak self] success in
-                    guard let self = self else { return }
-                    DispatchQueue.main.async {
-                        self.stopVoiceRecording()
-                    }
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.stopVoiceRecording()
-                }
-            }
-        }
-    }
-    
-    private func stopVoiceRecording(userStopped: Bool = false) {
-        let currentText = itemNameTextField.text
+            .store(in: &cancellables)
         
-        isRecording = false
-        isUserStoppedRecording = userStopped
-        voiceInputManager.stopRecording()
-        updateVoiceButtonAppearance(isRecording: false)
-
-        if userStopped, let savedText = currentText, !savedText.isEmpty {
-            itemNameTextField.text = savedText
-        }
+        viewModel.$isRecording
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isRecording in
+                self?.updateVoiceButtonAppearance(isRecording: isRecording)
+            }
+            .store(in: &cancellables)
     }
     
     private func updateVoiceButtonAppearance(isRecording: Bool) {
-        addItemVoiceButton.layer.removeAllAnimations()
-        addItemVoiceButton.transform = .identity
-        
         if isRecording {
+            addItemVoiceButton.layer.removeAllAnimations()
+            addItemVoiceButton.transform = .identity
+            
+            UIView.animate(
+                withDuration: 0.6,
+                delay: 0,
+                options: [.autoreverse, .repeat, .allowUserInteraction],
+                animations: {
+                    self.addItemVoiceButton.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
+                },
+                completion: nil
+            )
+            
             voiceLabel.text = "Остановить"
             voiceLabel.textColor = UIColor.slYellow
-            
-            DispatchQueue.main.async {
-                self.addItemVoiceButton.backgroundColor = UIColor.red.withAlphaComponent(0.3)
-                self.addItemVoiceButton.layer.cornerRadius = self.addItemVoiceButton.bounds.height / 2
-                self.addItemVoiceButton.clipsToBounds = true
-                
-                UIView.animate(
-                    withDuration: 0.8,
-                    delay: 0,
-                    options: [.autoreverse, .repeat, .allowUserInteraction],
-                    animations: {
-                        self.addItemVoiceButton.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
-                    }
-                )
-            }
         } else {
+            addItemVoiceButton.layer.removeAllAnimations()
+            addItemVoiceButton.transform = .identity
+            
             voiceLabel.text = "Зачитать"
             voiceLabel.textColor = .white
-            
-            addItemVoiceButton.backgroundColor = .clear
-            addItemVoiceButton.layer.cornerRadius = 0
-            addItemVoiceButton.clipsToBounds = false
         }
     }
 }
