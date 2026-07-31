@@ -13,11 +13,27 @@ class ShoppingItemTableViewCell: UITableViewCell {
     private lazy var containerView: UIView = {
         let view = UIView()
         view.clipsToBounds = true
+        view.backgroundColor = .slLightBlue
         view.layer.cornerRadius = Constants.cornerRadius
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.gray.cgColor
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+    
+    private let gradientBorderLayer: CAGradientLayer = {
+        let layer = CAGradientLayer()
+        layer.colors = [UIColor.slBlue.cgColor, UIColor.slYellow.cgColor, UIColor.slViolet.cgColor]
+        layer.startPoint = CGPoint(x: 0.0, y: 0.5)
+        layer.endPoint = CGPoint(x: 1.0, y: 0.5)
+        layer.locations = [0.0, 0.5, 1.0]
+        return layer
+    }()
+    
+    private let shapeLayer: CAShapeLayer = {
+        let layer = CAShapeLayer()
+        layer.fillColor = UIColor.clear.cgColor
+        layer.strokeColor = UIColor.black.cgColor
+        layer.lineWidth = 2
+        return layer
     }()
     
     private lazy var titleLabel: UILabel = {
@@ -34,6 +50,11 @@ class ShoppingItemTableViewCell: UITableViewCell {
         setupView()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateGradientBorder()
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -45,9 +66,14 @@ class ShoppingItemTableViewCell: UITableViewCell {
     }
     
     private func setupView() {
-        containerView.addSubview(titleLabel)
-        contentView.addSubview(containerView)
+        backgroundColor = .clear
         
+        contentView.addSubview(containerView)
+        containerView.addSubview(titleLabel)
+        
+        containerView.layer.insertSublayer(gradientBorderLayer, at: 0)
+        gradientBorderLayer.mask = shapeLayer
+
         addConstraint()
     }
     
@@ -63,5 +89,18 @@ class ShoppingItemTableViewCell: UITableViewCell {
             titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             titleLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
         ])
+    }
+    
+    private func updateGradientBorder() {
+        gradientBorderLayer.frame = containerView.bounds
+        
+        let path = UIBezierPath(
+            roundedRect: containerView.bounds,
+            byRoundingCorners: [.allCorners],
+            cornerRadii: CGSize(
+                width: Constants.cornerRadius,
+                height: Constants.cornerRadius)
+        )
+        shapeLayer.path = path.cgPath
     }
 }
