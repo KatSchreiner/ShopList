@@ -16,6 +16,8 @@ final class AddShoppingItemViewModel {
     @Published var isRecording: Bool = false
     @Published var voiceInputState: VoiceRecordingState = .idle
     
+    var onSendItem: ((String) -> Void)?
+    
     private var currentRecognizedText: String?
     
     init() {
@@ -31,12 +33,20 @@ final class AddShoppingItemViewModel {
     }
     
     func sendItem() {
-        print("Отправка: \\(itemText)")
+        print("📤 sendItem, isRecording = \(isRecording), audioEngine.isRunning = \(voiceInputManager.audioEngine.isRunning)")
+
+        guard !itemText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        print("Отправка: \(itemText)")
+        onSendItem?(itemText)
+        
+        itemText = ""
+        currentRecognizedText = nil
+        
+        voiceInputManager.startNewRecognitionSession()
     }
     
     func cleanup() {
-        voiceInputManager.stopRecording()
-        voiceInputManager.audioEngine.stop()
+        voiceInputManager.stopAll()
     }
     
     private func setupVoiceInputHandlers() {
@@ -56,7 +66,6 @@ final class AddShoppingItemViewModel {
             print("❌ Ошибка распознавания: \\(error.localizedDescription)")
             DispatchQueue.main.async {
                 self.voiceInputState = .error(error.localizedDescription)
-                self.stopVoiceRecording(userStopped: false)
             }
         }
     }
@@ -68,15 +77,18 @@ final class AddShoppingItemViewModel {
             guard let self = self else { return }
             
             if granted {
-                self.voiceInputManager.startRecording { [weak self] success in
-                    guard let self = self else { return }
-                    DispatchQueue.main.async {
-                        self.stopVoiceRecording(userStopped: false)
+                self.voiceInputManager.ensureAudioEngineRunning { [weak self] success in
+                    guard let self = self, success else {
+                        DispatchQueue.main.async {
+                            self?.isRecording = false
+                        }
+                        return
                     }
+                    self.voiceInputManager.startNewRecognitionSession()
                 }
             } else {
                 DispatchQueue.main.async {
-                    self.stopVoiceRecording(userStopped: false)
+                    self.isRecording = false
                 }
             }
         }
@@ -84,7 +96,11 @@ final class AddShoppingItemViewModel {
     
     func stopVoiceRecording(userStopped: Bool) {
         isRecording = false
-        voiceInputManager.stopRecording()
+        voiceInputManager.stopRecognitionSession()
+        
+        if userStopped {
+            voiceInputManager.stopAudioEngine()
+        }
         
         if userStopped, let savedText = currentRecognizedText, !savedText.isEmpty {
             itemText = savedText

@@ -8,6 +8,12 @@
 import UIKit
 
 final class ShoppingListViewModel {
-    var shoppingItems: [ShoppingItem] = []
+    private(set) var shoppingItems: [ShoppingItem] = []
+    
     var isEmpty: Bool { shoppingItems.isEmpty }
+
+    func addShoppingItem(title: String) {
+        let newItem = ShoppingItem(id: UUID(), title: title, isChecked: false)
+        shoppingItems.append(newItem)
+    }
 }

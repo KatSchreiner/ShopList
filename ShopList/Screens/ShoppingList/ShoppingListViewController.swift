@@ -7,10 +7,10 @@
 
 import UIKit
 
-class ShoppingListViewController: UIViewController {
+final class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Properties
-    private let viewModel = ShoppingListViewModel()
+    let viewModel = ShoppingListViewModel()
     
     private lazy var gradientBackground: GradientBackgroundView = {
         let gradientBackgroundView = GradientBackgroundView(
@@ -93,6 +93,14 @@ class ShoppingListViewController: UIViewController {
         let modalViewController = AddShoppingItemViewController()
         modalViewController.modalPresentationStyle = .custom
         modalViewController.transitioningDelegate = self
+        
+        modalViewController.viewModel.onSendItem = { [weak self] newItemText in
+            guard let self = self else { return }
+            self.viewModel.addShoppingItem(title: newItemText)
+            self.shoppingItemsTableView.reloadData()
+            self.updateEmptyState()
+        }
+        
         present(modalViewController, animated: true, completion: nil)
     }
     
@@ -102,12 +110,7 @@ class ShoppingListViewController: UIViewController {
             self.view.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
-        viewModel.shoppingItems = [
-        ShoppingItem(id: UUID(), title: "Молоко", isChecked: false),
-        ShoppingItem(id: UUID(), title: "Хлеб", isChecked: true),
-        ShoppingItem(id: UUID(), title: "Яйца", isChecked: false)
-        ]
-        shoppingItemsTableView.reloadData()
+
         setupConstraint()
     }
 

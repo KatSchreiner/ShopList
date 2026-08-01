@@ -10,7 +10,7 @@ import Combine
 
 final class AddShoppingItemViewController: UIViewController {
     // MARK: - Private Properties
-    private let viewModel = AddShoppingItemViewModel()
+    let viewModel = AddShoppingItemViewModel()
     private var cancellables = Set<AnyCancellable>()
     
     private lazy var gradientBackground: GradientBackgroundView = {
@@ -32,6 +32,7 @@ final class AddShoppingItemViewController: UIViewController {
         textField.textAlignment = .center
         textField.clipsToBounds = true
         textField.accessibilityIdentifier = "ItemNameTextField"
+        textField.inputView = UIView()
         return textField
     }()
     
@@ -116,13 +117,11 @@ final class AddShoppingItemViewController: UIViewController {
     
     @objc private func addItemVoiceButtonTapped() {
         UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
-//        addItemVoiceButton.scaleDownAnimation()
         viewModel.toggleVoiceRecording()
     }
     
     @objc private func sendItemButtonTapped() {
         UIImpactFeedbackGenerator(style: Constants.feedbackStyle).impactOccurred()
-        //sendItemButton.scaleDownAnimation()
         viewModel.sendItem()
     }
     
