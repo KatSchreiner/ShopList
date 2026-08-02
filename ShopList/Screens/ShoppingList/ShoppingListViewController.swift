@@ -95,10 +95,7 @@ final class ShoppingListViewController: UIViewController {
         modalViewController.transitioningDelegate = self
         
         modalViewController.viewModel.onSendItem = { [weak self] newItemText in
-            guard let self = self else { return }
-            self.viewModel.addShoppingItem(title: newItemText)
-            self.shoppingItemsTableView.reloadData()
-            self.updateEmptyState()
+            self?.handleNewItem(newItemText)
         }
         
         present(modalViewController, animated: true, completion: nil)
@@ -146,6 +143,24 @@ final class ShoppingListViewController: UIViewController {
         let isEmpty = viewModel.isEmpty
         emptyStateImageView.isHidden = !isEmpty
         emptyStateLabel.isHidden = !isEmpty
+    }
+    
+    private func handleNewItem(_ title: String) {
+        let indexPath = IndexPath(row: viewModel.shoppingItems.count, section: 0)
+        
+        viewModel.addShoppingItem(title: title)
+        
+        shoppingItemsTableView.performBatchUpdates {
+            shoppingItemsTableView.insertRows(at: [indexPath], with: .none)
+        } completion: { [weak self] _ in
+            guard let self = self,
+                  let cell = self.shoppingItemsTableView.cellForRow(at: indexPath) as? ShoppingItemTableViewCell else {
+                return
+            }
+            
+            self.updateEmptyState()
+            cell.animateInsertion()
+        }
     }
 }
 

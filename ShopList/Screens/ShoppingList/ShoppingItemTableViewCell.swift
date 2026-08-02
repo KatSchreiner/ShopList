@@ -132,4 +132,16 @@ class ShoppingItemTableViewCell: UITableViewCell {
         
         containerView.transform = isChecked ? CGAffineTransform(scaleX: 0.98, y: 0.98) : .identity
     }
+    
+    func animateInsertion() {
+        containerView.alpha = 0
+        containerView.transform = CGAffineTransform(translationX: 0, y: 10)
+        
+        UIView.animate(withDuration: 0.25,
+                       delay: 0,
+                       options: [.curveEaseOut, .beginFromCurrentState, .allowUserInteraction]) {
+            self.containerView.alpha = 1
+            self.containerView.transform = .identity
+        }
+    }
 }
