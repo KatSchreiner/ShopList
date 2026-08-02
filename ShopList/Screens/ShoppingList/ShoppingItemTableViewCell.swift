@@ -61,6 +61,7 @@ class ShoppingItemTableViewCell: UITableViewCell {
     
     func configure(with item: ShoppingItem) {
         titleLabel.text = item.title
+        applyCheckedState(item.isChecked)
     }
     
     private func setupView() {
@@ -100,5 +101,35 @@ class ShoppingItemTableViewCell: UITableViewCell {
                 height: Constants.cornerRadius)
         )
         shapeLayer.path = path.cgPath
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.attributedText = nil
+        titleLabel.text = nil
+        containerView.alpha = 1.0
+        containerView.transform = .identity
+    }
+
+    
+    private func applyCheckedState(_ isChecked: Bool) {
+        containerView.alpha = isChecked ? 0.55 : 1.0
+        titleLabel.alpha = isChecked ? 0.7 : 1.0
+        
+        let attributes: [NSAttributedString.Key: Any] = isChecked
+        ? [
+            .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+            .foregroundColor: UIColor.slDarkBlue.withAlphaComponent(0.6)
+        ]
+        : [
+            .foregroundColor: Constants.primaryColor
+        ]
+        
+        titleLabel.attributedText = NSAttributedString(
+            string: titleLabel.text ?? "",
+            attributes: attributes
+        )
+        
+        containerView.transform = isChecked ? CGAffineTransform(scaleX: 0.98, y: 0.98) : .identity
     }
 }

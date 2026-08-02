@@ -166,7 +166,6 @@ extension ShoppingListViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ShoppingItemTableViewCell.reuseIdentifier, for: indexPath) as? ShoppingItemTableViewCell else { return UITableViewCell() }
         
         let shoppingItem = viewModel.shoppingItems[indexPath.row]
-        print("Configuring cell for item: \(shoppingItem.title)")
 
         cell.configure(with: shoppingItem)
         cell.selectionStyle = .none
@@ -179,5 +178,13 @@ extension ShoppingListViewController: UITableViewDataSource {
 extension ShoppingListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = viewModel.shoppingItems[indexPath.row]
+        viewModel.toggleItemChecked(id: item.id)
+        
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
