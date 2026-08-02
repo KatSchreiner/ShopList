@@ -126,11 +126,11 @@ final class ShoppingListViewController: UIViewController {
             
             shoppingItemsTableView.topAnchor.constraint(equalTo: currentDayHeader.bottomAnchor, constant: 20),
             shoppingItemsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            shoppingItemsTableView.bottomAnchor.constraint(equalTo: showAddItemModalButton.topAnchor),
+            shoppingItemsTableView.bottomAnchor.constraint(equalTo: showAddItemModalButton.topAnchor, constant: -20),
             shoppingItemsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
             showAddItemModalButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            showAddItemModalButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            showAddItemModalButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             showAddItemModalButton.widthAnchor.constraint(equalToConstant: 200),
             showAddItemModalButton.heightAnchor.constraint(equalToConstant: 60),
             

@@ -61,8 +61,6 @@ class ShoppingItemTableViewCell: UITableViewCell {
     
     func configure(with item: ShoppingItem) {
         titleLabel.text = item.title
-        print("Текст: \\(titleLabel.text)")
-        print("Размеры label: \\(titleLabel.bounds)")
     }
     
     private func setupView() {
