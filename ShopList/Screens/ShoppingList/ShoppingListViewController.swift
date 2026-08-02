@@ -11,7 +11,8 @@ final class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Properties
     let viewModel = ShoppingListViewModel()
-    
+    private var clearListButtonBottomConstraint: NSLayoutConstraint?
+
     private lazy var gradientBackground: GradientBackgroundView = {
         let gradientBackgroundView = GradientBackgroundView(
             colors: [UIColor.slBlue.cgColor, UIColor.slWhite.cgColor],
@@ -46,6 +47,7 @@ final class ShoppingListViewController: UIViewController {
     private lazy var clearListButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "clean_list"), for: .normal)
+        button.addTarget(self, action: #selector(clearListButtonTapped), for: .touchUpInside)
         button.titleLabel?.accessibilityIdentifier = "ClearListButtonTitle"
         button.accessibilityLabel = "Очистить список покупок"
         button.accessibilityHint = "Удаляет все товары из списка"
@@ -87,6 +89,8 @@ final class ShoppingListViewController: UIViewController {
         return label
     }()
     
+    private var wasEmptyState = true
+    
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,17 +114,25 @@ final class ShoppingListViewController: UIViewController {
         present(modalViewController, animated: true, completion: nil)
     }
     
+    @IBAction private func clearListButtonTapped() {
+        
+    }
+    
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, currentDayHeader, shoppingItemsTableView, clearListButton, showAddItemModalButton, emptyStateLabel, emptyStateImageView].forEach { view in
+        [gradientBackground, currentDayHeader, clearListButton, shoppingItemsTableView, showAddItemModalButton, emptyStateLabel, emptyStateImageView].forEach { view in
             self.view.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
 
         setupConstraint()
+        
     }
 
     private func setupConstraint() {
+        clearListButtonBottomConstraint = clearListButton.bottomAnchor.constraint(equalTo: shoppingItemsTableView.topAnchor, constant: 60)
+        clearListButtonBottomConstraint?.isActive = true
+        
         NSLayoutConstraint.activate([
             gradientBackground.topAnchor.constraint(equalTo: view.topAnchor),
             gradientBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -129,8 +141,7 @@ final class ShoppingListViewController: UIViewController {
             
             currentDayHeader.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
             currentDayHeader.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 60),
-            
-            clearListButton.bottomAnchor.constraint(equalTo: shoppingItemsTableView.topAnchor),
+        
             clearListButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -60),
             
             shoppingItemsTableView.topAnchor.constraint(equalTo: currentDayHeader.bottomAnchor, constant: 20),
@@ -161,8 +172,40 @@ final class ShoppingListViewController: UIViewController {
     
     private func updateEmptyState() {
         let isEmpty = viewModel.isEmpty
+        
         emptyStateImageView.isHidden = !isEmpty
         emptyStateLabel.isHidden = !isEmpty
+        
+        if isEmpty {
+            clearListButton.isHidden = true
+            clearListButton.alpha = 0
+            clearListButton.transform = .identity
+        } else {
+            if wasEmptyState {
+                animateClearButton()
+            } else {
+                clearListButton.isHidden = false
+                clearListButton.alpha = 1
+                clearListButton.transform = .identity
+            }
+        }
+        
+        wasEmptyState = isEmpty
+    }
+    
+    private func animateClearButton() {
+        clearListButton.isHidden = false
+        clearListButton.alpha = 0
+        
+        UIView.animate(
+            withDuration: 0.35,
+            delay: 0,
+            options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState]
+        ) {
+            self.clearListButtonBottomConstraint?.constant = 0
+            self.view.layoutIfNeeded()
+            self.clearListButton.alpha = 1
+        }
     }
     
     private func handleNewItem(_ title: String) {

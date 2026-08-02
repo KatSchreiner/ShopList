@@ -110,7 +110,6 @@ class ShoppingItemTableViewCell: UITableViewCell {
         containerView.alpha = 1.0
         containerView.transform = .identity
     }
-
     
     private func applyCheckedState(_ isChecked: Bool) {
         containerView.alpha = isChecked ? 0.55 : 1.0
