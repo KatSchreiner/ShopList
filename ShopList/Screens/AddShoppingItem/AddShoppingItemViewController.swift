@@ -25,7 +25,6 @@ final class AddShoppingItemViewController: UIViewController {
     
     private lazy var itemNameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Что купить?"
         textField.font = Constants.bodyFont
         textField.layer.cornerRadius = Constants.cornerRadius
         textField.backgroundColor = Constants.backgroundColor
@@ -34,6 +33,15 @@ final class AddShoppingItemViewController: UIViewController {
         textField.accessibilityIdentifier = "ItemNameTextField"
         textField.inputView = UIView()
         return textField
+    }()
+    
+    private lazy var placeholderLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Что купить?"
+        label.textAlignment = .center
+        label.textColor = .slDarkBlue.withAlphaComponent(0.5)
+        label.font = Constants.bodyFont
+        return label
     }()
     
     private lazy var addItemVoiceButton: UIButton = {
@@ -127,7 +135,7 @@ final class AddShoppingItemViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, itemNameTextField, buttonStackView].forEach { view in
+        [gradientBackground, itemNameTextField, buttonStackView, placeholderLabel].forEach { view in
             self.view.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -147,6 +155,10 @@ final class AddShoppingItemViewController: UIViewController {
             itemNameTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -40),
             itemNameTextField.heightAnchor.constraint(equalToConstant: 70),
             
+            placeholderLabel.leadingAnchor.constraint(equalTo: itemNameTextField.leadingAnchor),
+            placeholderLabel.trailingAnchor.constraint(equalTo: itemNameTextField.trailingAnchor),
+            placeholderLabel.centerYAnchor.constraint(equalTo: itemNameTextField.centerYAnchor),
+            
             buttonStackView.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
             buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
@@ -165,6 +177,7 @@ final class AddShoppingItemViewController: UIViewController {
             .sink { [weak self] text in
                 guard let self = self, self.itemNameTextField.text != text else { return }
                 self.itemNameTextField.text = text
+                self.updatePlaceholderVisibility(isEmpty: text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
             .store(in: &cancellables)
         
@@ -205,6 +218,12 @@ final class AddShoppingItemViewController: UIViewController {
             
             voiceLabel.text = "Зачитать"
             voiceLabel.textColor = .white
+        }
+    }
+    
+    private func updatePlaceholderVisibility(isEmpty: Bool) {
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .allowUserInteraction]) {
+            self.placeholderLabel.alpha = isEmpty ? 1.0 : 0.0
         }
     }
 }

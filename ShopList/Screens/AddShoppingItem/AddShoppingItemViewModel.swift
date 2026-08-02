@@ -78,7 +78,6 @@ final class AddShoppingItemViewModel {
             
             if granted {
                 do {
-                    // Эти три метода заменили старый ensureAudioEngineRunning
                     try self.voiceInputManager.prepareAudioSession()
                     try self.voiceInputManager.ensureTapInstalled()
                     try self.voiceInputManager.startAudioEngineIfNeeded()
@@ -89,7 +88,6 @@ final class AddShoppingItemViewModel {
                     DispatchQueue.main.async {
                         self.isRecording = false
                     }
-                    // Тут можно вызвать onError у менеджера, если нужно
                 }
             } else {
                 DispatchQueue.main.async {

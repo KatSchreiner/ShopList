@@ -91,7 +91,7 @@ final class VoiceInputManager {
             guard let self = self else { return }
             
             if let error = error {
-                self.onError?(.taskCancelled) // или более точная ошибка
+                self.onError?(.taskCancelled) 
                 return
             }
             
