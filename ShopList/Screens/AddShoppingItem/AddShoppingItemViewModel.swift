@@ -14,7 +14,7 @@ final class AddShoppingItemViewModel {
     
     @Published var itemText: String = ""
     @Published var isRecording: Bool = false
-    @Published var voiceInputState: VoiceRecordingState = .idle
+    @Published var voiceInputState: VoiceInputState = .idle
     
     var onSendItem: ((String) -> Void)?
     
@@ -65,7 +65,7 @@ final class AddShoppingItemViewModel {
             guard let self = self else { return }
             print("❌ Ошибка распознавания: \\(error.localizedDescription)")
             DispatchQueue.main.async {
-                self.voiceInputState = .error(error.localizedDescription)
+                self.voiceInputState = .stopped
             }
         }
     }
@@ -77,14 +77,19 @@ final class AddShoppingItemViewModel {
             guard let self = self else { return }
             
             if granted {
-                self.voiceInputManager.ensureAudioEngineRunning { [weak self] success in
-                    guard let self = self, success else {
-                        DispatchQueue.main.async {
-                            self?.isRecording = false
-                        }
-                        return
-                    }
+                do {
+                    // Эти три метода заменили старый ensureAudioEngineRunning
+                    try self.voiceInputManager.prepareAudioSession()
+                    try self.voiceInputManager.ensureTapInstalled()
+                    try self.voiceInputManager.startAudioEngineIfNeeded()
+                    
                     self.voiceInputManager.startNewRecognitionSession()
+                } catch {
+                    print("❌ Ошибка подготовки аудио: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        self.isRecording = false
+                    }
+                    // Тут можно вызвать onError у менеджера, если нужно
                 }
             } else {
                 DispatchQueue.main.async {
@@ -93,6 +98,7 @@ final class AddShoppingItemViewModel {
             }
         }
     }
+
     
     func stopVoiceRecording(userStopped: Bool) {
         isRecording = false

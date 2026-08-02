@@ -7,8 +7,8 @@
 
 import UIKit
 
-enum VoiceRecordingState {
+enum VoiceInputState {
     case idle
     case recording
-    case error(String)
+    case stopped
 }
