@@ -43,6 +43,15 @@ final class ShoppingListViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var clearListButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "clean_list"), for: .normal)
+        button.titleLabel?.accessibilityIdentifier = "ClearListButtonTitle"
+        button.accessibilityLabel = "Очистить список покупок"
+        button.accessibilityHint = "Удаляет все товары из списка"
+        return button
+    }()
+    
     private lazy var showAddItemModalButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("Добавить", for: .normal)
@@ -103,7 +112,7 @@ final class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, currentDayHeader, shoppingItemsTableView, showAddItemModalButton, emptyStateLabel, emptyStateImageView].forEach { view in
+        [gradientBackground, currentDayHeader, shoppingItemsTableView, clearListButton, showAddItemModalButton, emptyStateLabel, emptyStateImageView].forEach { view in
             self.view.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -118,8 +127,11 @@ final class ShoppingListViewController: UIViewController {
             gradientBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             gradientBackground.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            currentDayHeader.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            currentDayHeader.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            currentDayHeader.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
+            currentDayHeader.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 60),
+            
+            clearListButton.bottomAnchor.constraint(equalTo: shoppingItemsTableView.topAnchor),
+            clearListButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -60),
             
             shoppingItemsTableView.topAnchor.constraint(equalTo: currentDayHeader.bottomAnchor, constant: 20),
             shoppingItemsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
