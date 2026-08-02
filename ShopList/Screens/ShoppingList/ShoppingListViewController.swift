@@ -23,8 +23,7 @@ final class ShoppingListViewController: UIViewController {
     
     private lazy var currentDayHeader: UILabel = {
         let label = UILabel()
-        label.text = "Сегодня"
-        label.textAlignment = .center
+        label.textAlignment = .left
         label.font = Constants.titleFont
         label.adjustsFontForContentSizeCategory = true
         label.textColor = .white
@@ -83,6 +82,7 @@ final class ShoppingListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        updateCurrentDayHeader()
         updateEmptyState()
     }
     
@@ -137,6 +137,14 @@ final class ShoppingListViewController: UIViewController {
             emptyStateLabel.topAnchor.constraint(equalTo: emptyStateImageView.bottomAnchor, constant: 30),
             emptyStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+    }
+    
+    private func updateCurrentDayHeader() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "d MMMM, EE"
+        dateFormatter.locale = Locale(identifier: "ru-RU")
+        
+        currentDayHeader.text = dateFormatter.string(from: Date())
     }
     
     private func updateEmptyState() {
