@@ -115,7 +115,9 @@ final class ShoppingListViewController: UIViewController {
     }
     
     @IBAction private func clearListButtonTapped() {
-        
+        viewModel.clearList()
+        shoppingItemsTableView.reloadData()
+        updateEmptyState()
     }
     
     // MARK: - Private Methods

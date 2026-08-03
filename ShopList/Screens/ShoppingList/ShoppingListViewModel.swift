@@ -23,6 +23,10 @@ final class ShoppingListViewModel {
         shoppingItems.append(newItem)
     }
     
+    func clearList() {
+        shoppingItems.removeAll()
+    }
+    
     func toggleItemChecked(id: UUID) {
         guard let index = shoppingItems.firstIndex(where: { $0.id == id }) else { return }
         shoppingItems[index].isChecked.toggle()
