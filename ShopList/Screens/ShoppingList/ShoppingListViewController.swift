@@ -119,9 +119,24 @@ final class ShoppingListViewController: UIViewController {
     }
     
     @IBAction private func clearListButtonTapped() {
-        viewModel.clearList()
-        shoppingItemsTableView.reloadData()
-        updateEmptyState()
+        guard let visibleRows = shoppingItemsTableView.indexPathsForVisibleRows else {
+            viewModel.clearList()
+            shoppingItemsTableView.reloadData()
+            updateEmptyState()
+            return
+        }
+
+        UIView.animate(withDuration: 0.3, animations: {
+            for indexPath in visibleRows {
+                if let cell = self.shoppingItemsTableView.cellForRow(at: indexPath) {
+                    cell.alpha = 0
+                }
+            }
+        }, completion: { _ in
+            self.viewModel.clearList()
+            self.shoppingItemsTableView.reloadData()
+            self.updateEmptyState()
+        })
     }
     
     // MARK: - Private Methods
