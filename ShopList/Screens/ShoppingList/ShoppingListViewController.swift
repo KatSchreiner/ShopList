@@ -193,10 +193,8 @@ final class ShoppingListViewController: UIViewController {
     
     private func updateEmptyState() {
         let isEmpty = viewModel.isEmpty
-        
-        emptyStateImageView.isHidden = !isEmpty
-        emptyStateLabel.isHidden = !isEmpty
-        
+
+        animateEmptyState(isEmpty: isEmpty)
         animateClearButton(isEmpty: isEmpty)
     }
     
@@ -209,6 +207,44 @@ final class ShoppingListViewController: UIViewController {
         ){
             self.view.layoutIfNeeded()
             self.clearListButton.alpha = isEmpty ? 0 : 1
+        }
+    }
+    
+    private func animateEmptyState(isEmpty: Bool) {
+        let emptyStateViews = [
+            emptyStateLabel,
+            emptyStateImageView
+        ]
+
+        if isEmpty {
+            emptyStateViews.forEach {
+                $0.isHidden = false
+                $0.alpha = 0
+            }
+
+            UIView.animate(
+                withDuration: 0.3,
+                delay: 0,
+                options: [.curveEaseInOut, .beginFromCurrentState, .allowUserInteraction]
+            ) {
+                emptyStateViews.forEach {
+                    $0.alpha = 1
+                }
+            }
+        } else {
+            UIView.animate(
+                withDuration: 0.3,
+                delay: 0,
+                options: [.curveEaseInOut, .beginFromCurrentState, .allowUserInteraction]
+            ) {
+                emptyStateViews.forEach {
+                    $0.alpha = 0
+                }
+            } completion: { _ in
+                emptyStateViews.forEach {
+                    $0.isHidden = true
+                }
+            }
         }
     }
     
