@@ -32,7 +32,19 @@ final class AddShoppingItemViewController: UIViewController {
         textField.clipsToBounds = true
         textField.accessibilityIdentifier = "ItemNameTextField"
         textField.inputView = UIView()
+        textField.rightView = clearButton
+        textField.rightViewMode = .always
         return textField
+    }()
+    
+    private lazy var clearButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "xmark.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 22, weight: .regular))
+        button.setImage(image, for: .normal)
+        button.tintColor = .slDarkBlue.withAlphaComponent(0.2)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -20, bottom: 0, right: 0)
+        button.addTarget(self, action: #selector(clearItemNameTextField), for: .touchUpInside)
+        return button
     }()
     
     private lazy var placeholderLabel: UILabel = {
@@ -134,6 +146,12 @@ final class AddShoppingItemViewController: UIViewController {
         viewModel.sendItem()
     }
     
+    @objc private func clearItemNameTextField() {
+        viewModel.clearItemText()
+        itemNameTextField.text = ""
+        updatePlaceholderVisibility(isEmpty: true)
+    }
+    
     // MARK: - Private Methods
     private func setupView() {
         [gradientBackground, itemNameTextField, buttonStackView, placeholderLabel].forEach { view in
@@ -176,9 +194,14 @@ final class AddShoppingItemViewController: UIViewController {
         viewModel.$itemText
             .receive(on: DispatchQueue.main)
             .sink { [weak self] text in
-                guard let self = self, self.itemNameTextField.text != text else { return }
-                self.itemNameTextField.text = text
-                self.updatePlaceholderVisibility(isEmpty: text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                guard let self = self else { return }
+                if self.itemNameTextField.text != text {
+                    self.itemNameTextField.text = text
+                }
+                let isEmpty = text
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .isEmpty
+                self.updatePlaceholderVisibility(isEmpty: isEmpty)
             }
             .store(in: &cancellables)
         

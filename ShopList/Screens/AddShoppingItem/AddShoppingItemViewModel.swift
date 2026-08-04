@@ -33,8 +33,6 @@ final class AddShoppingItemViewModel {
     }
     
     func sendItem() {
-        print("📤 sendItem, isRecording = \(isRecording), audioEngine.isRunning = \(voiceInputManager.audioEngine.isRunning)")
-
         guard !itemText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         print("Отправка: \(itemText)")
         onSendItem?(itemText)
@@ -47,6 +45,15 @@ final class AddShoppingItemViewModel {
     
     func cleanup() {
         voiceInputManager.stopAll()
+    }
+    
+    func clearItemText() {
+        itemText = ""
+        currentRecognizedText = nil
+        
+        if isRecording {
+            voiceInputManager.startNewRecognitionSession()
+        }
     }
     
     private func setupVoiceInputHandlers() {
