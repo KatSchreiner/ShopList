@@ -55,6 +55,14 @@ class ShoppingItemTableViewCell: UITableViewCell {
         updateGradientBorder()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.attributedText = nil
+        titleLabel.text = nil
+        containerView.alpha = 1.0
+        containerView.transform = .identity
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -103,14 +111,6 @@ class ShoppingItemTableViewCell: UITableViewCell {
         shapeLayer.path = path.cgPath
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        titleLabel.attributedText = nil
-        titleLabel.text = nil
-        containerView.alpha = 1.0
-        containerView.transform = .identity
-    }
-    
     private func applyCheckedState(_ isChecked: Bool) {
         containerView.alpha = isChecked ? 0.55 : 1.0
         titleLabel.alpha = isChecked ? 0.7 : 1.0
@@ -132,13 +132,19 @@ class ShoppingItemTableViewCell: UITableViewCell {
         containerView.transform = isChecked ? CGAffineTransform(scaleX: 0.98, y: 0.98) : .identity
     }
     
+    func prepareForInsertion() {
+            containerView.alpha = 0
+            containerView.transform = CGAffineTransform(
+                translationX: 0,
+                y: 10
+            )
+        }
+    
     func animateInsertion() {
-        containerView.alpha = 0
-        containerView.transform = CGAffineTransform(translationX: 0, y: 10)
-        
-        UIView.animate(withDuration: 0.25,
-                       delay: 0,
-                       options: [.curveEaseOut, .beginFromCurrentState, .allowUserInteraction]) {
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 0,
+            options: [.curveEaseOut, .beginFromCurrentState, .allowUserInteraction]) {
             self.containerView.alpha = 1
             self.containerView.transform = .identity
         }

@@ -120,6 +120,7 @@ final class AddShoppingItemViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        addItemVoiceButton.stopPulse()
         viewModel.cleanup()
     }
     
@@ -191,39 +192,24 @@ final class AddShoppingItemViewController: UIViewController {
     
     private func updateVoiceButtonAppearance(isRecording: Bool) {
         if isRecording {
-            UIView.animate(
-                withDuration: 0.6,
-                delay: 0,
-                options: [.autoreverse, .repeat, .allowUserInteraction],
-                animations: {
-                    self.addItemVoiceButton.transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
-                },
-                completion: nil
+            addItemVoiceButton.startPulse(
+                scale: 1.15,
+                duration: 0.6
             )
-            
             voiceLabel.text = "Остановить"
             voiceLabel.textColor = UIColor.slYellow
         } else {
-            UIView.animate(
-                withDuration: 0.4,
-                delay: 0,
-                usingSpringWithDamping: 0.7,
-                initialSpringVelocity: 0.5,
-                options: [.allowUserInteraction, .beginFromCurrentState],
-                animations: {
-                    self.addItemVoiceButton.transform = .identity
-                },
-                completion: nil
-            )
-            
+            addItemVoiceButton.stopPulse()
             voiceLabel.text = "Зачитать"
             voiceLabel.textColor = .white
         }
     }
     
     private func updatePlaceholderVisibility(isEmpty: Bool) {
-        UIView.animate(withDuration: 0.2, delay: 0, options: [.beginFromCurrentState, .allowUserInteraction]) {
-            self.placeholderLabel.alpha = isEmpty ? 1.0 : 0.0
+        if isEmpty {
+            placeholderLabel.fadeIn(duration: 0.2)
+        } else {
+            placeholderLabel.fadeOut(duration: 0.2)
         }
     }
 }

@@ -89,7 +89,7 @@ final class ShoppingListViewController: UIViewController {
         return label
     }()
     
-    private var wasEmptyState = true
+    private var insertionIndexPath: IndexPath?
     
     // MARK: - View Life Cycles
     override func viewDidLoad() {
@@ -200,8 +200,9 @@ final class ShoppingListViewController: UIViewController {
     
     private func animateClearButton(isEmpty: Bool) {
         clearListButtonBottomConstraint?.constant = isEmpty ? 60 : 0
+        
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: 0.3,
             delay: 0,
             options: [.curveEaseInOut, .beginFromCurrentState, .allowUserInteraction]
         ){
@@ -218,32 +219,11 @@ final class ShoppingListViewController: UIViewController {
 
         if isEmpty {
             emptyStateViews.forEach {
-                $0.isHidden = false
-                $0.alpha = 0
-            }
-
-            UIView.animate(
-                withDuration: 0.3,
-                delay: 0,
-                options: [.curveEaseInOut, .beginFromCurrentState, .allowUserInteraction]
-            ) {
-                emptyStateViews.forEach {
-                    $0.alpha = 1
-                }
+                $0.fadeIn(duration: 0.3)
             }
         } else {
-            UIView.animate(
-                withDuration: 0.3,
-                delay: 0,
-                options: [.curveEaseInOut, .beginFromCurrentState, .allowUserInteraction]
-            ) {
-                emptyStateViews.forEach {
-                    $0.alpha = 0
-                }
-            } completion: { _ in
-                emptyStateViews.forEach {
-                    $0.isHidden = true
-                }
+            emptyStateViews.forEach {
+                $0.fadeOut(duration: 0.3, hideAfterAnimation: true)
             }
         }
     }
@@ -251,6 +231,7 @@ final class ShoppingListViewController: UIViewController {
     private func handleNewItem(_ title: String) {
         let indexPath = IndexPath(row: viewModel.shoppingItems.count, section: 0)
         
+        insertionIndexPath = indexPath
         viewModel.addShoppingItem(title: title)
         
         shoppingItemsTableView.performBatchUpdates {
@@ -261,6 +242,7 @@ final class ShoppingListViewController: UIViewController {
                 return
             }
             
+            self.insertionIndexPath = nil
             self.updateEmptyState()
             cell.animateInsertion()
         }
@@ -287,6 +269,10 @@ extension ShoppingListViewController: UITableViewDataSource {
 
         cell.configure(with: shoppingItem)
         cell.selectionStyle = .none
+        
+        if indexPath == insertionIndexPath {
+            cell.prepareForInsertion()
+        }
         
         return cell
     }
