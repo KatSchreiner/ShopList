@@ -69,6 +69,7 @@ final class ShoppingListViewController: UIViewController {
     private lazy var emptyStateImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "no_items_added"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.accessibilityIdentifier = "EmptyStateImageView"
         return imageView
     }()
     
@@ -86,6 +87,7 @@ final class ShoppingListViewController: UIViewController {
             string: label.text ?? "",
             attributes: [.paragraphStyle: paragraphStyle])
         label.attributedText = attributedText
+        label.accessibilityIdentifier = "EmptyStateLabel"
         return label
     }()
     
