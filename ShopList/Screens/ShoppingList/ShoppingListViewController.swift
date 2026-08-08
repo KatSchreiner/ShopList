@@ -48,9 +48,10 @@ final class ShoppingListViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: "clean_list"), for: .normal)
         button.addTarget(self, action: #selector(clearListButtonTapped), for: .touchUpInside)
-        button.titleLabel?.accessibilityIdentifier = "ClearListButtonTitle"
         button.accessibilityLabel = "Очистить список покупок"
         button.accessibilityHint = "Удаляет все товары из списка"
+        button.titleLabel?.accessibilityIdentifier = "ClearListButtonTitle"
+        button.accessibilityIdentifier = "ClearListButton"
         return button
     }()
     
@@ -141,6 +142,13 @@ final class ShoppingListViewController: UIViewController {
         })
     }
     
+    // MARK: - Public Methods
+    func isClearButtonInEmptyState() -> Bool {
+        return clearListButton.alpha < 0.1 &&
+               (clearListButtonBottomConstraint?.constant ?? 0) == 60
+    }
+
+    
     // MARK: - Private Methods
     private func setupView() {
         [gradientBackground, currentDayHeader, clearListButton, shoppingItemsTableView, showAddItemModalButton, emptyStateLabel, emptyStateImageView].forEach { view in
@@ -200,8 +208,13 @@ final class ShoppingListViewController: UIViewController {
         animateClearButton(isEmpty: isEmpty)
     }
     
+    internal func expectedClearButtonYOffset(forEmptyState isEmpty: Bool) -> CGFloat {
+        return isEmpty ? 60 : 0
+    }
+
     private func animateClearButton(isEmpty: Bool) {
-        clearListButtonBottomConstraint?.constant = isEmpty ? 60 : 0
+        let yOffset = expectedClearButtonYOffset(forEmptyState: isEmpty)
+        clearListButtonBottomConstraint?.constant = yOffset
         
         UIView.animate(
             withDuration: 0.3,

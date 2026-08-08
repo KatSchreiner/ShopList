@@ -11,12 +11,19 @@ import XCTest
 @MainActor
 final class ShoppingListViewControllerTests: XCTestCase {
     var sut: ShoppingListViewController!
-
+    var viewModel: ShoppingListViewModel!
+    
     override func setUp() {
         super.setUp()
+        viewModel = ShoppingListViewModel()
         sut = ShoppingListViewController()
         _ = sut.view
-        sut.viewDidAppear(false)
+    }
+    
+    override func tearDown() {
+        sut = nil
+        viewModel = nil
+        super.tearDown()
     }
 
     func test_emptyList_showsEmptyStateViews() {
@@ -44,13 +51,16 @@ final class ShoppingListViewControllerTests: XCTestCase {
     }
     
     func test_nonEmptyList_hidesEmptyStateViews() {
+        // Given
         _ = sut.view
         sut.viewDidAppear(false)
 
         sut.viewModel.addShoppingItem(title: "Молоко")
 
+        // When
         sut.viewDidAppear(false)
 
+        //Then
         let expectation = expectation(description: "Анимация скрытия empty state должна завершиться")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             expectation.fulfill()
@@ -74,4 +84,18 @@ final class ShoppingListViewControllerTests: XCTestCase {
         XCTAssertLessThanOrEqual(imageView.alpha, 0.1, "emptyStateImageView должен стать почти прозрачным")
     }
 
+    func test_clearListButton_isEmptyState_whenListIsEmpty() {
+        // Given
+        // When
+        sut.viewDidAppear(false)
+        
+        //Then
+        let animationExpectation = expectation(description: "Анимация кнопки должна завершиться")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            animationExpectation.fulfill()
+        }
+        wait(for: [animationExpectation], timeout: 1.0)
+        
+        XCTAssertTrue(sut.isClearButtonInEmptyState(), "Кнопка должна быть в пустом состоянии")
+    }
 }
