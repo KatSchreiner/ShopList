@@ -8,6 +8,12 @@
 import UIKit
 
 final class ShoppingListViewModel {
+    private let repository: ShoppingItemsRepository
+    
+    init(repository: ShoppingItemsRepository = .shared) {
+        self.repository = repository
+        reloadItems()
+    }
     private(set) var shoppingItems: [ShoppingItem] = []
     
     var isEmpty: Bool {
@@ -15,6 +21,8 @@ final class ShoppingListViewModel {
     }
 
     func addShoppingItem(title: String) {
+        repository.addItem(title: title)
+        
         let newItem = ShoppingItem(
             id: UUID(),
             title: title,
@@ -30,5 +38,9 @@ final class ShoppingListViewModel {
     func toggleItemChecked(id: UUID) {
         guard let index = shoppingItems.firstIndex(where: { $0.id == id }) else { return }
         shoppingItems[index].isChecked.toggle()
+    }
+    
+    func reloadItems() {
+        shoppingItems = repository.fetchAll()
     }
 }
