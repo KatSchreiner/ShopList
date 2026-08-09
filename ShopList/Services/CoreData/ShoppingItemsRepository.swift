@@ -61,4 +61,19 @@ final class ShoppingItemsRepository {
             print("Ошибка toggleItem: \(error.localizedDescription)")
         }
     }
+    
+    func clearAll() {
+        guard let request = ShoppingItemEntity.fetchRequest() as? NSFetchRequest<any NSFetchRequestResult> else {
+            print("Не удалось создать запрос для очистки")
+            return
+        }
+        
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+        
+        do {
+            try context.persistentStoreCoordinator?.execute(deleteRequest, with: context)
+        } catch {
+            print("Ошибка очистки: \(error.localizedDescription)")
+        }
+    }
 }

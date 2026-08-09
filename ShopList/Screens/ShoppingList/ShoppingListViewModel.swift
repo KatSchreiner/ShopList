@@ -31,7 +31,8 @@ final class ShoppingListViewModel {
     }
     
     func clearList() {
-        shoppingItems.removeAll()
+        repository.clearAll()
+        reloadItems()
     }
     
     func toggleItemChecked(id: UUID) {
