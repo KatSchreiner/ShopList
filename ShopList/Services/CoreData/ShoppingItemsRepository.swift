@@ -17,6 +17,10 @@ final class ShoppingItemsRepository {
         self.context = CoreDataManager.shared.context
     }
     
+    private func save() {
+        CoreDataManager.shared.saveContext()
+    }
+    
     func fetchAll() -> [ShoppingItem] {
         let request: NSFetchRequest<ShoppingItemEntity> = ShoppingItemEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
@@ -41,7 +45,20 @@ final class ShoppingItemsRepository {
         save()
     }
     
-    private func save() {
-        CoreDataManager.shared.saveContext()
+    func toggleItem(forId id: UUID) {
+        let request: NSFetchRequest<ShoppingItemEntity> = ShoppingItemEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            let results = try context.fetch(request)
+            guard let entity = results.first else {
+                print("Товар с ID \(id) не найден")
+                return
+            }
+            entity.isChecked.toggle()
+            save()
+        } catch {
+            print("Ошибка toggleItem: \(error.localizedDescription)")
+        }
     }
 }

@@ -14,21 +14,20 @@ final class ShoppingListViewModel {
         self.repository = repository
         reloadItems()
     }
+    
     private(set) var shoppingItems: [ShoppingItem] = []
     
     var isEmpty: Bool {
         shoppingItems.isEmpty
     }
 
+    func reloadItems() {
+        shoppingItems = repository.fetchAll()
+    }
+    
     func addShoppingItem(title: String) {
         repository.addItem(title: title)
-        
-        let newItem = ShoppingItem(
-            id: UUID(),
-            title: title,
-            isChecked: false
-        )
-        shoppingItems.append(newItem)
+        reloadItems()
     }
     
     func clearList() {
@@ -36,11 +35,7 @@ final class ShoppingListViewModel {
     }
     
     func toggleItemChecked(id: UUID) {
-        guard let index = shoppingItems.firstIndex(where: { $0.id == id }) else { return }
-        shoppingItems[index].isChecked.toggle()
-    }
-    
-    func reloadItems() {
-        shoppingItems = repository.fetchAll()
+        repository.toggleItem(forId: id)
+        reloadItems()
     }
 }
