@@ -263,6 +263,7 @@ final class ShoppingListViewController: UIViewController {
                     self?.updateEmptyState()
                 }
             } catch {
+                self?.showError(error)
             }
         }
     }
@@ -288,6 +289,7 @@ final class ShoppingListViewController: UIViewController {
             }
         } catch {
             insertionIndexPath = nil
+            showError(error)
         }
     }
     
@@ -297,7 +299,22 @@ final class ShoppingListViewController: UIViewController {
             shoppingItemsTableView.reloadData()
             updateEmptyState()
         } catch {
+            showError(error)
         }
+    }
+    
+    private func showError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "Ошибка",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(
+            UIAlertAction(title: "OK", style: .default)
+        )
+
+        present(alert, animated: true)
     }
 }
 
@@ -343,6 +360,7 @@ extension ShoppingListViewController: UITableViewDelegate {
             try viewModel.toggleItemChecked(id: item.id)
             tableView.reloadRows(at: [indexPath], with: .automatic)
         } catch {
+            showError(error)
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
