@@ -10,9 +10,8 @@ import UIKit
 final class ShoppingListViewModel {
     private let repository: ShoppingItemsRepository
     
-    init(repository: ShoppingItemsRepository = .shared) {
+    init(repository: ShoppingItemsRepository ) {
         self.repository = repository
-        reloadItems()
     }
     
     private(set) var shoppingItems: [ShoppingItem] = []
@@ -21,22 +20,22 @@ final class ShoppingListViewModel {
         shoppingItems.isEmpty
     }
 
-    func reloadItems() {
-        shoppingItems = repository.fetchAll()
+    func reloadItems() throws {
+        shoppingItems = try repository.fetchAll()
     }
     
-    func addShoppingItem(title: String) {
-        repository.addItem(title: title)
-        reloadItems()
+    func addShoppingItem(title: String) throws {
+        try repository.addItem(title: title)
+        try reloadItems()
     }
     
-    func clearList() {
-        repository.clearAll()
-        reloadItems()
+    func clearList() throws {
+        try repository.clearAll()
+        try reloadItems()
     }
     
-    func toggleItemChecked(id: UUID) {
-        repository.toggleItem(forId: id)
-        reloadItems()
+    func toggleItemChecked(id: UUID) throws {
+        try repository.toggleItem(forId: id)
+        try reloadItems()
     }
 }

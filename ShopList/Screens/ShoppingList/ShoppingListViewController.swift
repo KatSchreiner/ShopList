@@ -10,7 +10,7 @@ import UIKit
 final class ShoppingListViewController: UIViewController {
     
     // MARK: - Private Properties
-    let viewModel = ShoppingListViewModel()
+    let viewModel: ShoppingListViewModel
     private var clearListButtonBottomConstraint: NSLayoutConstraint?
 
     private lazy var gradientBackground: GradientBackgroundView = {
@@ -94,6 +94,15 @@ final class ShoppingListViewController: UIViewController {
     
     private var insertionIndexPath: IndexPath?
     
+    init(repository: ShoppingItemsRepository) {
+        self.viewModel = ShoppingListViewModel(repository: repository)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,6 +113,11 @@ final class ShoppingListViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateEmptyState()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadItems()
     }
     
     // MARK: - IB Actions
@@ -123,9 +137,7 @@ final class ShoppingListViewController: UIViewController {
     
     @IBAction private func clearListButtonTapped() {
         guard let visibleRows = shoppingItemsTableView.indexPathsForVisibleRows else {
-            viewModel.clearList()
-            shoppingItemsTableView.reloadData()
-            updateEmptyState()
+            clearList()
             return
         }
 
@@ -136,9 +148,7 @@ final class ShoppingListViewController: UIViewController {
                 }
             }
         }, completion: { _ in
-            self.viewModel.clearList()
-            self.shoppingItemsTableView.reloadData()
-            self.updateEmptyState()
+            self.clearList()
         })
     }
     
@@ -243,23 +253,50 @@ final class ShoppingListViewController: UIViewController {
         }
     }
     
+    private func loadItems() {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            
+            do {
+                try self?.viewModel.reloadItems()
+                DispatchQueue.main.async {
+                    self?.shoppingItemsTableView.reloadData()
+                    self?.updateEmptyState()
+                }
+            } catch {
+            }
+        }
+    }
+    
     private func handleNewItem(_ title: String) {
         let indexPath = IndexPath(row: viewModel.shoppingItems.count, section: 0)
         
-        insertionIndexPath = indexPath
-        viewModel.addShoppingItem(title: title)
-        
-        shoppingItemsTableView.performBatchUpdates {
-            shoppingItemsTableView.insertRows(at: [indexPath], with: .none)
-        } completion: { [weak self] _ in
-            guard let self = self,
-                  let cell = self.shoppingItemsTableView.cellForRow(at: indexPath) as? ShoppingItemTableViewCell else {
-                return
-            }
+        do {
+            insertionIndexPath = indexPath
+            try viewModel.addShoppingItem(title: title)
             
-            self.insertionIndexPath = nil
-            self.updateEmptyState()
-            cell.animateInsertion()
+            shoppingItemsTableView.performBatchUpdates {
+                shoppingItemsTableView.insertRows(at: [indexPath], with: .none)
+            } completion: { [weak self] _ in
+                guard let self = self,
+                      let cell = self.shoppingItemsTableView.cellForRow(at: indexPath) as? ShoppingItemTableViewCell else {
+                    return
+                }
+                
+                self.insertionIndexPath = nil
+                self.updateEmptyState()
+                cell.animateInsertion()
+            }
+        } catch {
+            insertionIndexPath = nil
+        }
+    }
+    
+    private func clearList() {
+        do {
+            try viewModel.clearList()
+            shoppingItemsTableView.reloadData()
+            updateEmptyState()
+        } catch {
         }
     }
 }
@@ -301,9 +338,13 @@ extension ShoppingListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = viewModel.shoppingItems[indexPath.row]
-        viewModel.toggleItemChecked(id: item.id)
         
-        tableView.reloadRows(at: [indexPath], with: .automatic)
+        do {
+            try viewModel.toggleItemChecked(id: item.id)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        } catch {
+        }
+        
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

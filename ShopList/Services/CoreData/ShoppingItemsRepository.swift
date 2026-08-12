@@ -9,71 +9,59 @@ import Foundation
 import CoreData
 
 final class ShoppingItemsRepository {
-    static let shared = ShoppingItemsRepository()
+    private let coreDataManager: CoreDataManager
     
-    private let context: NSManagedObjectContext
-    
-    private init() {
-        self.context = CoreDataManager.shared.context
+    init(coreDataManager: CoreDataManager = .shared) {
+        self.coreDataManager = coreDataManager
     }
     
-    private func save() {
-        CoreDataManager.shared.saveContext()
+    private func save() throws {
+        self.coreDataManager.saveContext()
     }
     
-    func fetchAll() -> [ShoppingItem] {
+    func fetchAll() throws -> [ShoppingItem] {
         let request: NSFetchRequest<ShoppingItemEntity> = ShoppingItemEntity.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        let entities = try coreDataManager.context.fetch(request)
         
-        do {
-            let entities = try context.fetch(request)
-            return entities.map {
-                ShoppingItem(
-                    id: $0.id,
-                    title: $0.title,
-                    isChecked: $0.isChecked
-                )
-            }
-        } catch {
-            print("Ошибка выборки: \(error.localizedDescription)")
-            return []
+        return entities.map {
+            ShoppingItem(
+                id: $0.id,
+                title: $0.title,
+                isChecked: $0.isChecked
+            )
         }
     }
     
-    func addItem(title: String) {
-        _ = ShoppingItemEntity(context: context, title: title)
-        save()
+    func addItem(title: String) throws {
+        guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
+            throw ShoppingItemError.emptyTitle
+        }
+        _ = ShoppingItemEntity(context: coreDataManager.context, title: title)
+        try save()
     }
     
-    func toggleItem(forId id: UUID) {
+    func toggleItem(forId id: UUID) throws {
         let request: NSFetchRequest<ShoppingItemEntity> = ShoppingItemEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        request.fetchLimit = 1
         
-        do {
-            let results = try context.fetch(request)
-            guard let entity = results.first else {
-                print("Товар с ID \(id) не найден")
-                return
-            }
-            entity.isChecked.toggle()
-            save()
-        } catch {
-            print("Ошибка toggleItem: \(error.localizedDescription)")
+        let results = try coreDataManager.context.fetch(request)
+        guard let entity = results.first else {
+            throw ShoppingItemError.itemNotFound(id: id)
         }
+        
+        entity.isChecked.toggle()
+        try save()
     }
     
-    func clearAll() {
-        guard let request = ShoppingItemEntity.fetchRequest() as? NSFetchRequest<any NSFetchRequestResult> else {
-            print("Не удалось создать запрос для очистки")
-            return
-        }
-        
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+    func clearAll() throws {
+        let request = ShoppingItemEntity.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request as! NSFetchRequest<any NSFetchRequestResult>)
         
         do {
-            try context.persistentStoreCoordinator?.execute(deleteRequest, with: context)
+            try coreDataManager.context.persistentStoreCoordinator?.execute(deleteRequest, with: coreDataManager.context)
         } catch {
-            print("Ошибка очистки: \(error.localizedDescription)")
+            throw ShoppingItemError.persistence(error)
         }
     }
 }
