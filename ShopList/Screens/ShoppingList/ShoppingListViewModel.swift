@@ -29,6 +29,12 @@ final class ShoppingListViewModel {
         try reloadItems()
     }
     
+    func deleteShopping(id: UUID) throws {
+        try repository.deleteItem(id: id)
+        
+        try reloadItems()
+    }
+    
     func clearList() throws {
         try repository.clearAll()
         try reloadItems()

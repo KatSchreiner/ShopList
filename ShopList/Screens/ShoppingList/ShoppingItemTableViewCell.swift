@@ -89,7 +89,7 @@ class ShoppingItemTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
             titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),

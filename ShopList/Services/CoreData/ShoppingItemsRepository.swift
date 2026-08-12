@@ -40,6 +40,20 @@ final class ShoppingItemsRepository {
         try save()
     }
     
+    func deleteItem(id: UUID) throws {
+        let request: NSFetchRequest<ShoppingItemEntity> = ShoppingItemEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        request.fetchLimit = 1
+        
+        let results = try coreDataManager.context.fetch(request)
+        guard let entity = results.first else {
+            throw ShoppingItemError.itemNotFound(id: id)
+        }
+        
+        coreDataManager.context.delete(entity)
+        try save()
+    }
+    
     func toggleItem(forId id: UUID) throws {
         let request: NSFetchRequest<ShoppingItemEntity> = ShoppingItemEntity.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)

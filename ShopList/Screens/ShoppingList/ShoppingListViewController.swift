@@ -365,4 +365,38 @@ extension ShoppingListViewController: UITableViewDelegate {
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath)
+    -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: nil) { [weak self] _, _, completionHandler in
+            guard let self = self else { return }
+            
+            let item = self.viewModel.shoppingItems[indexPath.row]
+            
+            do {
+                try self.viewModel.deleteShopping(id: item.id)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                self.updateEmptyState()
+                completionHandler(true)
+            } catch {
+                self.showError(error)
+                completionHandler(false)
+            }
+        }
+        let config = UIImage.SymbolConfiguration(
+            pointSize: 20,
+            weight: .regular
+        )
+        deleteAction.image = UIImage(
+            systemName: "trash.fill",
+            withConfiguration: config)?
+            .withRenderingMode(.alwaysTemplate)
+        
+        deleteAction.backgroundColor = .slYellow
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
 }
