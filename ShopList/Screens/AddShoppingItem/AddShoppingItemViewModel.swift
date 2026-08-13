@@ -15,8 +15,11 @@ final class AddShoppingItemViewModel {
     @Published var itemText: String = ""
     @Published var isRecording: Bool = false
     @Published var voiceInputState: VoiceInputState = .idle
+    @Published var hasDuplicateItem: Bool = false
+    @Published var duplicateMessage: String?
     
     var onSendItem: ((String) -> Void)?
+    var onCheckDuplicates: (([String]) -> Bool)?
     
     private var currentRecognizedText: String?
     
@@ -33,12 +36,29 @@ final class AddShoppingItemViewModel {
     }
     
     func sendItem() {
-        guard !itemText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-        print("Отправка: \(itemText)")
-        onSendItem?(itemText)
+        let text = itemText.trimmingCharacters(in: .whitespaces)
+        guard !text.isEmpty else { return }
+
+        do {
+            let repository = ShoppingItemsRepository()
+            hasDuplicateItem = try repository.exists(title: text)
+
+        } catch {
+            print("Ошибка проверки дубликата: \(error)")
+            hasDuplicateItem = false
+        }
+        
+        if hasDuplicateItem {
+            duplicateMessage = "Такой товар уже есть в списке"
+            return
+        }
+        
+        onSendItem?(text)
         
         itemText = ""
         currentRecognizedText = nil
+        hasDuplicateItem = false
+        duplicateMessage = nil
         
         voiceInputManager.startNewRecognitionSession()
     }

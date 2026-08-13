@@ -123,6 +123,16 @@ final class AddShoppingItemViewController: UIViewController {
         return stackView
     }()
     
+    private lazy var duplicateLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = Constants.captionFont
+        label.numberOfLines = 0
+        label.isHidden = true
+        return label
+    }()
+    
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -154,7 +164,7 @@ final class AddShoppingItemViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        [gradientBackground, itemNameTextField, buttonStackView, placeholderLabel].forEach { view in
+        [gradientBackground, itemNameTextField, buttonStackView, placeholderLabel, duplicateLabel].forEach { view in
             self.view.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -181,7 +191,11 @@ final class AddShoppingItemViewController: UIViewController {
             buttonStackView.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 50),
             buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
-            buttonStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 85)
+            buttonStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 85),
+            
+            duplicateLabel.topAnchor.constraint(equalTo: itemNameTextField.bottomAnchor, constant: 10),
+            duplicateLabel.leadingAnchor.constraint(equalTo: itemNameTextField.leadingAnchor),
+            duplicateLabel.trailingAnchor.constraint(equalTo: itemNameTextField.trailingAnchor)
         ])
     }
     
@@ -209,6 +223,18 @@ final class AddShoppingItemViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isRecording in
                 self?.updateVoiceButtonAppearance(isRecording: isRecording)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$hasDuplicateItem
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] hasDuplicate in
+                guard let self = self else { return }
+                self.duplicateLabel.isHidden = !hasDuplicate
+                
+                if hasDuplicate, let message = self.viewModel.duplicateMessage {
+                    self.duplicateLabel.text = message
+                }
             }
             .store(in: &cancellables)
     }

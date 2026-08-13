@@ -78,4 +78,16 @@ final class ShoppingItemsRepository {
             throw ShoppingItemError.persistence(error)
         }
     }
+    
+    func exists(title: String) throws -> Bool {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return false }
+        
+        let request: NSFetchRequest<ShoppingItemEntity> = ShoppingItemEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "title ==[cd] %@", trimmed)
+        request.fetchLimit = 1
+        
+        let results = try coreDataManager.context.fetch(request)
+        return !results.isEmpty
+    }
 }
